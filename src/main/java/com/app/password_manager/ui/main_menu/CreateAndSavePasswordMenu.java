@@ -1,14 +1,19 @@
 package com.app.password_manager.ui.main_menu;
 
+import com.app.password_manager.logic.IPasswordGenerator;
+import com.app.password_manager.logic.PasswordGeneratorFactory;
+import com.app.password_manager.ui.message_box.PasswordGeneratorMessageBox;
 import com.app.password_manager.utils.JMultilineLabel;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class CreateAndSavePasswordMenu extends MainMenu {
 
   private JTextField passwordServiceTextBox;
   private JPasswordField passwordTextBox;
   private JButton saveButton;
+  private JButton generatePasswordButton;
 
   public CreateAndSavePasswordMenu() {
     super();
@@ -16,7 +21,6 @@ public class CreateAndSavePasswordMenu extends MainMenu {
     JMultilineLabel passwordServiceTextTitle = new JMultilineLabel(
         "Enter service for which you want to save password.");
     passwordServiceTextTitle.setBounds(5,5, width-20, 40);
-//    passwordServiceTextTitle.setBorder(BorderFactory.createLineBorder(Color.blue));
     add(passwordServiceTextTitle);
 
     passwordServiceTextBox = new JTextField("");
@@ -26,7 +30,6 @@ public class CreateAndSavePasswordMenu extends MainMenu {
     JMultilineLabel passwordTitle = new JMultilineLabel(
         "Enter Password: ");
     passwordTitle.setBounds(5,95, width-20, 20);
-//    passwordTitle.setBorder(BorderFactory.createLineBorder(Color.blue));
     add(passwordTitle);
 
     passwordTextBox = new JPasswordField("");
@@ -35,15 +38,37 @@ public class CreateAndSavePasswordMenu extends MainMenu {
 
     saveButton = new JButton("Save");
     saveButton.setBounds(15, 160, width-40, 50);
+    saveButton.setBorder(BorderFactory.createLineBorder(Color.blue));
     saveButton.addActionListener(event -> saveButtonClick());
     add(saveButton);
 
+    generatePasswordButton = new JButton("Generate password");
+    generatePasswordButton.setBounds(15, 220, width-40, 50);
+    generatePasswordButton.addActionListener(event -> generatePasswordButtonClick());
+    generatePasswordButton.setBorder(BorderFactory.createLineBorder(Color.blue));
+    add(generatePasswordButton);
   }
 
   private void saveButtonClick(){
     String service = passwordServiceTextBox.getText();
     String password = new String(passwordTextBox.getPassword());
-    char a = 'a';
+  }
+
+  private void generatePasswordButtonClick(){
+
+    String generatedPassword = PasswordGeneratorFactory
+        .createInstance()
+        .generatePassword(IPasswordGenerator.Complexity.HARD);
+
+    int code  = PasswordGeneratorMessageBox.getResponseCode(generatedPassword);
+
+    if(code == PasswordGeneratorMessageBox.YES){
+      passwordTextBox.setText(generatedPassword);
+    }else if(code == PasswordGeneratorMessageBox.NO){
+      passwordTextBox.setText("");
+    }
+
+
   }
 
 }

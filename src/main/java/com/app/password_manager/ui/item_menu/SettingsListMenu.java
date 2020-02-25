@@ -14,7 +14,6 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
   public static final int height = 300;
   private static final String[] LIST_ELEMENTS = {
       "Create and save password",
-      "Generate and save password",
       "Generate password"
   };
 
@@ -47,9 +46,6 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
         break;
       case 1:
         Confirm.getResponseCode("Message title", LIST_ELEMENTS[1]);//0-no, 1-yes
-        break;
-      case 2:
-        Confirm.getResponseCode("Message title", LIST_ELEMENTS[2]);//0-no, 1-yes
         break;
       default:
         break;
