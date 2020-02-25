@@ -1,14 +1,13 @@
-package com.app.password_manager.ui;
+package com.app.password_manager.ui.item_menu;
 
+import com.app.password_manager.ui.main_menu.MainMenuForCreatePassword;
 import com.app.password_manager.utils.Confirm;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 public class SettingsListMenu extends JList<String> implements MouseListener {
 
@@ -37,15 +36,13 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
 
   @Override
   public void mouseClicked(MouseEvent mouseEvent) {
-//        int confirmMessageCode = Confirm.getResponseCode("hello", "message");//0-no, 1-yes
-
-
     if (mouseEvent.getClickCount() == 2) {
       int listIndex = this.getSelectedIndex(); //0...n
 
       switch(listIndex){
         case 0:
-          Confirm.getResponseCode("Message title", LIST_ELEMENTS[0]);//0-no, 1-yes
+//          Confirm.getResponseCode("Message title", LIST_ELEMENTS[0]);//0-no, 1-yes
+          MainMenuForCreatePassword.getResponseCode();
           break;
         case 1:
           Confirm.getResponseCode("Message title", LIST_ELEMENTS[1]);//0-no, 1-yes
@@ -55,11 +52,8 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
           break;
         default:
           break;
-
       }
     }
-
-    char a = 'a';
   }
 
   @Override

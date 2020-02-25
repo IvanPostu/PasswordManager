@@ -1,11 +1,10 @@
-package com.app.password_manager.ui;
+package com.app.password_manager.ui.main_menu;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainMenu extends JPanel {
 
-//    200, 0, 600, 600
     private static final int width = 600;
     private static final int height = 600;
 
@@ -19,5 +18,7 @@ public class MainMenu extends JPanel {
         setFocusable(true);
         requestFocus();
     }
+
+
 
 }

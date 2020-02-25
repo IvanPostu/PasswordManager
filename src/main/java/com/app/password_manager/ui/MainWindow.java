@@ -1,23 +1,21 @@
 package com.app.password_manager.ui;
 
+import com.app.password_manager.global.JFramesManager;
+
 import javax.swing.*;
 import java.awt.*;
 
 
 public class MainWindow extends JFrame {
 
-    private ItemMenu itemMenu;
-    private MainMenu mainMenu;
 
 
-    public MainWindow(){
+
+    public MainWindow(JFramesManager jFramesManager){
         super();
 
-        this.itemMenu = new ItemMenu();
-        this.mainMenu = new MainMenu();
-
-        add(this.itemMenu);
-        add(this.mainMenu);
+        add(jFramesManager.getItemMenu());
+        add(jFramesManager.getMainMenu());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Password Manager");
