@@ -8,8 +8,8 @@ import java.awt.*;
 
 public class MainWindow extends JFrame {
 
-
-
+    public static final int width = 600;
+    public static final int height = 400;
 
     public MainWindow(JFramesManager jFramesManager){
         super();
@@ -19,7 +19,7 @@ public class MainWindow extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Password Manager");
-        setSize(new Dimension(800, 600));
+        setSize(new Dimension(width, height));
         setResizable(false);
         setLocationRelativeTo(null);
         setLayout(null);
