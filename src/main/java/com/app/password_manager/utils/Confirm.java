@@ -16,7 +16,7 @@ public class Confirm {
         panel.setLayout(null);
         JLabel label1 = new JLabel(text);
         label1.setVerticalAlignment(SwingConstants.BOTTOM);
-        label1.setBounds(20, 20, 200, 30);
+        label1.setBounds(20, 20, 200, 50);
         label1.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label1);
 
