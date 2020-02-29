@@ -2,7 +2,6 @@ package com.app.password_manager.logic;
 
 
 import com.app.password_manager.utils.RandomInRange;
-import com.sun.istack.internal.Nullable;
 import lombok.NoArgsConstructor;
 
 import java.security.SecureRandom;
@@ -20,7 +19,7 @@ public class PasswordGeneratorSimpleImpl implements IPasswordGenerator {
 
   private static final int[] RANGE = {7, 10, 14, 18, 22};
 
-  private int complexityToPasswordLength(@Nullable Complexity complexity) {
+  private int complexityToPasswordLength(Complexity complexity) {
 
     Random rand = new Random();
 
@@ -51,7 +50,7 @@ public class PasswordGeneratorSimpleImpl implements IPasswordGenerator {
     StringBuilder resultBuilder = new StringBuilder();
 
     for(int i=0; i<passwordLength; i++){
-      char c = alphabet.charAt(RandomInRange.randomIntInRang(random, 0, alphabetLength));
+      char c = alphabet.charAt(RandomInRange.randomIntInRang(random, 0, alphabetLength-1));
       resultBuilder.append(c);
     }
 
