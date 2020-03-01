@@ -20,6 +20,9 @@ public class Main {
 //        for (byte b : encrypted) System.out.printf("%x", b);
 //        System.out.printf("\n\n");
 
+        DESAlgorithm myDes = new DESAlgorithm();
+        myDes.Encryption();
+
     }
 
 }
