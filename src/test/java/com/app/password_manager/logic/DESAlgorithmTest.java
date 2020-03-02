@@ -1,30 +1,23 @@
 package com.app.password_manager.logic;
 
 
-import com.app.password_manager.utils.HexStringToByteArray;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 
 
 public class DESAlgorithmTest {
 
   private final String[] rawTexts = {
-      "HelloWorld",
-      "Tank1347317943714",
-      "0987134314913473198473918749317498317984798137498314",
-      "kajdhfuwehufhu24u24hiuh2i4uug24",
-      "u24hfu9f9u24hugh4u2hg24uh4iu2g"
+      "abcdefgh"
   };
 
   private final String[] keys = {
-      "qwertyui",
-      "abcdefgh"
+      "qwertyui"
   };
 
 
   @Test
-  public void encryptAndDecryptTest() throws Exception{
+  public void encryptAndDecryptTest() throws Exception {
 //
 //    Arrays.stream(keys).forEach( key -> {
 //      DESAlgorithm desAlgorithm = new DESAlgorithm(key.getBytes());
@@ -40,36 +33,20 @@ public class DESAlgorithmTest {
 //
 
 
+    for (String key : keys) {
+      DESAlgorithm myDes = new DESAlgorithm(key);
+      for (String text : rawTexts) {
+        String encryptedText = myDes.encrypt(text);
+        for(byte b : encryptedText.getBytes()) System.out.printf("%x", b);
+
+        System.out.println("\n\n");
+
+        String encryptedText1 = myDes.encrypt(text);
+        for(byte b : encryptedText1.getBytes()) System.out.printf("%x", b);
+      }
+    }
 
 
   }
-
-//  @Test
-//  public void encryptTest() throws Exception {
-//    final byte[] key = "abcdefgh".getBytes();
-//    final byte[] rawText = "qwertyui".getBytes();
-//
-//    DESAlgorithm desAlgorithm = new DESAlgorithm(key);
-//
-//    final byte[] encryptedText = desAlgorithm.encrypt(rawText);
-//
-//    for(byte b : "qwertyui".getBytes()) System.out.printf("%x", b);
-//    System.out.println();
-//
-//    for(byte b : encryptedText) System.out.printf("%x", b);
-//    System.out.println();
-//
-//    final byte[] decryptedText = desAlgorithm.decrypt(encryptedText);
-//    for(byte b : decryptedText) System.out.printf("%x", b);
-//    System.out.println();
-//
-//
-////    if(!Arrays.equals(encryptedText, result)){
-////      throw new Exception("Error");
-////    }
-//
-//
-//  }
-
 
 }

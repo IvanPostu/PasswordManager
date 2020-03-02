@@ -4,7 +4,7 @@ import com.app.password_manager.logic.DESAlgorithm;
 
 public class Main {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 //        JFramesManager jFramesManager = new JFramesManager();
 //        jFramesManager.setMainMenu(new CreateAndSavePasswordMenu());
 //        jFramesManager.setItemMenu(new ItemMenu(jFramesManager));
@@ -20,9 +20,15 @@ public class Main {
 //        for (byte b : encrypted) System.out.printf("%x", b);
 //        System.out.printf("\n\n");
 
-        DESAlgorithm myDes = new DESAlgorithm();
-        myDes.Encryption();
+//    DESAlgorithm myDes = new DESAlgorithm();
+//
+//    try{
+//      myDes.encrypt("qwertyui", "abcdefgh");
+//    }catch(Exception e){
+//      e.printStackTrace();
+//    }
 
-    }
+
+  }
 
 }
