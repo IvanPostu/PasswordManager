@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DESAlgorithmModel {
 
-  private String encryptedData;
+  private String encryptedHexData;
   private String decryptedData;
-  private Long originalDataLength;
+  private Integer originalDataLength;
 
 }

@@ -12,8 +12,10 @@ public class DESAlgorithmTest {
   public void encryptAndDecryptTest() throws Exception {
 
     DESAlgorithm des = new DESAlgorithm();
-    des.encryptPlainText("qwertyui", "abcdefghabcdefgh1");
+    DESAlgorithmModel encModel = des.encryptPlainText("qwertyui", "abcdefghabcd3fgh1");
+    DESAlgorithmModel decModel = des.decryptPlainText("qwertyui", encModel.getEncryptedHexData());
 
+    char a = 'a';
 
 //    byte[] message = des.hexStringToByteArray("123456789ABCDEF");
 //    System.out.println("PLAIN TEXT:");

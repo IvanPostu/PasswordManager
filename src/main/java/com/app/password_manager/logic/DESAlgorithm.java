@@ -142,7 +142,7 @@ public class DESAlgorithm {
       final int num = 8 - additional;
       StringBuilder plainTextBuilder = new StringBuilder(plainText);
       for(int i = 0; i<num; i++){
-        plainTextBuilder.append((char) 0x0);
+        plainTextBuilder.append((char)'0');
       }
       plainText = plainTextBuilder.toString();
     }
@@ -159,8 +159,59 @@ public class DESAlgorithm {
     }
 
     final String hexKey = rawStringToHexString(key);
+    String result = "";
 
-    return null;
+    for(String s : hexBlocks){
+      byte[] cipher = this.crypt(this.hexStringToByteArray(s),
+          this.hexStringToByteArray(hexKey), "encrypt");
+
+      for(byte b : cipher){
+        result += String.format("%X", b);
+      }
+
+
+//      byte[] zzz =  this.hexStringToByteArray(result);
+
+    }
+
+
+    return new DESAlgorithmModel(result, plainText.substring(0, plainTextLength), plainTextLength);
+  }
+
+  public DESAlgorithmModel decryptPlainText(
+      final String key,
+      String encryptedText)
+      throws Exception {
+
+    if (key.length() != 8) {
+      throw new Exception("Required key length is 8");
+    }
+
+    final int SEPARATOR = 16;
+    final int encryptedTextLength = encryptedText.length();
+    final int hexBlocksSize = encryptedTextLength / SEPARATOR;
+    String[] hexBlocks = new String[hexBlocksSize];
+
+
+    for (int i = 0; i < hexBlocksSize; i++) {
+      hexBlocks[i] = "";
+      for (int j = 0; j < SEPARATOR; j++) {
+        hexBlocks[i] += encryptedText.substring((i * SEPARATOR) + j, (i * SEPARATOR) + j + 1);
+      }
+    }
+
+    final String hexKey = rawStringToHexString(key);
+    String result = "";
+
+    for(String s : hexBlocks){
+      byte[] encryptedBytes =  this.hexStringToByteArray(s);
+      byte[] decryptedBytes = this.crypt(encryptedBytes, this.hexStringToByteArray(hexKey), "decrypt");
+      for(byte b : decryptedBytes) result += (char)b;
+    }
+
+
+
+    return result;
   }
 
   private String rawStringToHexString(final String rawString){
