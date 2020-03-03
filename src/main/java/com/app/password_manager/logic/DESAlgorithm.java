@@ -1,43 +1,11 @@
 package com.app.password_manager.logic;
 
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class DESAlgorithm {
-
-  //  PrintWriter pw = new PrintWriter(System.out, true);
-  String[] RoundKeyArray = new String[16];
-  String[] Keys = new String[16];
-  String permutatedKey = "";
-  String plainTextBinary = "";
-  String finalResult = "";
-  String encipher = "";
-  String textEncipher = "";
-  int leftSpace;
-  String decipher = "";
-  String binaryDecipher = "";
-  String RoundKey = "";
-  String originalKey = "";
-  int[] NumLeftShifts = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
-
-  int[] PC1 = {
-      57, 49, 41, 33, 25, 17, 9,
-      1, 58, 50, 42, 34, 26, 18,
-      10, 2, 59, 51, 43, 35, 27,
-      19, 11, 3, 60, 52, 44, 36,
-      63, 55, 47, 39, 31, 23, 15,
-      7, 62, 54, 46, 38, 30, 22,
-      14, 6, 61, 53, 45, 37, 29,
-      21, 13, 5, 28, 20, 12, 4};
-
-  int[] PC2 = {
-      14, 17, 11, 24, 1, 5,
-      3, 28, 15, 6, 21, 10,
-      23, 19, 12, 4, 26, 8,
-      16, 7, 27, 20, 13, 2,
-      41, 52, 31, 37, 47, 55,
-      30, 40, 51, 45, 33, 48,
-      44, 49, 39, 56, 34, 53,
-      46, 42, 50, 36, 29, 32};
-  int[] IP = {
+  /* Initial Permutation */
+  static final int[] IP = {
       58, 50, 42, 34, 26, 18, 10, 2,
       60, 52, 44, 36, 28, 20, 12, 4,
       62, 54, 46, 38, 30, 22, 14, 6,
@@ -45,8 +13,10 @@ public class DESAlgorithm {
       57, 49, 41, 33, 25, 17, 9, 1,
       59, 51, 43, 35, 27, 19, 11, 3,
       61, 53, 45, 37, 29, 21, 13, 5,
-      63, 55, 47, 39, 31, 23, 15, 7};
-  int[] FP = {
+      63, 55, 47, 39, 31, 23, 15, 7
+  };
+  /* Inverse Initial Permutation */
+  static final int[] IIP = {
       40, 8, 48, 16, 56, 24, 64, 32,
       39, 7, 47, 15, 55, 23, 63, 31,
       38, 6, 46, 14, 54, 22, 62, 30,
@@ -54,8 +24,10 @@ public class DESAlgorithm {
       36, 4, 44, 12, 52, 20, 60, 28,
       35, 3, 43, 11, 51, 19, 59, 27,
       34, 2, 42, 10, 50, 18, 58, 26,
-      33, 1, 41, 9, 49, 17, 57, 25};
-  int[] E = {
+      33, 1, 41, 9, 49, 17, 57, 25
+  };
+  /* Expansion Permutation */
+  static final int[] E = {
       32, 1, 2, 3, 4, 5,
       4, 5, 6, 7, 8, 9,
       8, 9, 10, 11, 12, 13,
@@ -63,814 +35,437 @@ public class DESAlgorithm {
       16, 17, 18, 19, 20, 21,
       20, 21, 22, 23, 24, 25,
       24, 25, 26, 27, 28, 29,
-      28, 29, 30, 31, 32, 1};
-  int[][] S1 = {
-      {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
-      {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
-      {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
-      {15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}};
-
-  int[][] S2 = {
-      {15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10},
-      {3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5},
-      {0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15},
-      {13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9}};
-
-  int[][] S3 = {
-      {10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8},
-      {13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1},
-      {13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7},
-      {1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12}};
-
-  int[][] S4 = {
-      {7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15},
-      {13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9},
-      {10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4},
-      {3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14}};
-
-  int[][] S5 = {
-      {2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9},
-      {14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6},
-      {4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14},
-      {11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3}};
-
-  int[][] S6 = {
-      {12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11},
-      {10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8},
-      {9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6},
-      {4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13}};
-
-  int[][] S7 = {
-      {4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1},
-      {13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6},
-      {1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2},
-      {6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12}};
-
-  int[][] S8 = {
-      {13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7},
-      {1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2},
-      {7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8},
-      {2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}};
-
-  int[] P = {16, 7, 20, 21,
+      28, 29, 30, 31, 32, 1
+  };
+  /* Permutation Function */
+  static final int[] P = {
+      16, 7, 20, 21,
       29, 12, 28, 17,
       1, 15, 23, 26,
       5, 18, 31, 10,
       2, 8, 24, 14,
       32, 27, 3, 9,
       19, 13, 30, 6,
-      22, 11, 4, 25};
+      22, 11, 4, 25
+  };
+  /* S-Boxes*/
+  static final int[] S1 = {
+      14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
+      0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8,
+      4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0,
+      15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13
+  };
+  static final int[] S2 = {
+      15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10,
+      3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5,
+      0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15,
+      13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9
+  };
+  static final int[] S3 = {
+      10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8,
+      13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1,
+      13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7,
+      1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12
+  };
+  static final int[] S4 = {
+      7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15,
+      13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9,
+      10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4,
+      3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14
+  };
+  static final int[] S5 = {
+      2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9,
+      14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6,
+      4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14,
+      11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3
+  };
+  static final int[] S6 = {
+      12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11,
+      10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8,
+      9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6,
+      4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13
+  };
+  static final int[] S7 = {
+      4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1,
+      13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6,
+      1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2,
+      6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12
+  };
+  static final int[] S8 = {
+      13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7,
+      1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2,
+      7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
+      2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
+  };
+  /* Permuted Choice One */
+  static final int[] PC1 = {
+      57, 49, 41, 33, 25, 17, 9,
+      1, 58, 50, 42, 34, 26, 18,
+      10, 2, 59, 51, 43, 35, 27,
+      19, 11, 3, 60, 52, 44, 36,
+      63, 55, 47, 39, 31, 23, 15,
+      7, 62, 54, 46, 38, 30, 22,
+      14, 6, 61, 53, 45, 37, 29,
+      21, 13, 5, 28, 20, 12, 4
+  };
+  /* Permuted Choice Two */
+  static final int[] PC2 = {
+      14, 17, 11, 24, 1, 5,
+      3, 28, 15, 6, 21, 10,
+      23, 19, 12, 4, 26, 8,
+      16, 7, 27, 20, 13, 2,
+      41, 52, 31, 37, 47, 55,
+      30, 40, 51, 45, 33, 48,
+      44, 49, 39, 56, 34, 53,
+      46, 42, 50, 36, 29, 32
+  };
+  /* Schedule of Left Shifts */
+  static final int[] SHIFTS = {
+      1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
+  };
 
-  public DESAlgorithm(final String key) {
-    this.originalKey = key;
+  public DESAlgorithmModel encryptPlainText(
+      final String key,
+      String plainText)
+      throws Exception {
+
+    if (key.length() != 8) {
+      throw new Exception("Required key length is 8");
+    }
+
+    final int plainTextLength = plainText.length();
+    final int additional = plainTextLength % 8;
+    final int hexBlocksSize = plainTextLength / 8 + (additional == 0 ? 0 : 1);
+    String[] hexBlocks = new String[hexBlocksSize];
+
+    if(additional != 0){
+      final int num = 8 - additional;
+      StringBuilder plainTextBuilder = new StringBuilder(plainText);
+      for(int i = 0; i<num; i++){
+        plainTextBuilder.append((char) 0x0);
+      }
+      plainText = plainTextBuilder.toString();
+    }
+
+    for (int i = 0; i < hexBlocksSize; i++) {
+      hexBlocks[i] = "";
+      for (int j = 0; j < 8; j++) {
+        hexBlocks[i] += plainText.substring((i * 8) + j, (i * 8) + j + 1);
+      }
+    }
+
+    for(int i=0; i<hexBlocksSize; i++){
+      hexBlocks[i] = this.rawStringToHexString(hexBlocks[i]);
+    }
+
+    final String hexKey = rawStringToHexString(key);
+
+    return null;
   }
 
-  public String encrypt(final String plainText) throws Exception {
-
-    String binaryKey = strTobin(originalKey);
-
-    binaryKey = binaryKey.replace(" ", "");
-
-    /*Get the 56-bit permutation from the original key using PC-1*/
-    for (int i : PC1) {
-      permutatedKey += binaryKey.charAt(i - 1);
-    }
-//    permutatedKey.replaceAll("(.{8})(?!$)", "$1 ");
-
-    /* Next, split this key into left and right halves, LK and RK, where each half has 28 bits. */
-    String LK = permutatedKey.substring(0, 28);
-    String RK = permutatedKey.substring(28, 56);
-
-    /* Now, perform 16 left circular shifts from the original LK and RK */
-    String Lkey = LK;
-    String Rkey = RK;
-//    pw.println();
-    int index = 0;
-    for (int a : NumLeftShifts) {
-      Lkey = CircularLeftShift(Lkey, a);
-      Rkey = CircularLeftShift(Rkey, a);
-      Keys[index] = Lkey + Rkey;
-      index++;
-    }
-
-    /* Then build the 16 48-bit sub keys using the PC-2 Permutation table */
-    index = 0;
-    for (String key : Keys) {
-      for (int j : PC2) {
-        RoundKey += key.charAt(j - 1);
-      }
-      RoundKeyArray[index] = RoundKey;
-      index++;
-      RoundKey = "";
-    }
-
-    /******************************************** 2.ENCODE  MESSAGE **************************************************
-     ****************************************************************************************************************/
-    binaryKey = strTobin(plainText).replace(" ", "");
-    String BinaryText = binaryKey;
-
-    // Use plainTextBinary to form a loop
-    int plainTextLength = binaryKey.length();
-    if (plainTextLength < 64) {
-      throw new Exception("Your Plain text is " + plainTextLength + "-bits long. It must be atleast 64-bits(8 characters)");
-    } else {
-      int leftpadString = plainTextLength % 64;
-      int loop = leftpadString != 0 ? plainTextLength / 64 + 1 : plainTextLength / 64;
-      int start = 0;
-      int end = 64;
-      for (int id = loop, wordCount = 1; id > 0; id--, wordCount++) {
-        int leftpad = 64 - leftpadString;
-        leftSpace = leftpad % 64 != 0 ? leftpad / 8 : 0;
-        end = plainTextLength - start < 64 ? plainTextLength : end;
-        plainTextBinary = BinaryText.substring(start, end);
-        while (plainTextBinary.length() != 64) {
-          plainTextBinary = "0" + plainTextBinary;
-        }
-
-        /* Make an Initial Permutation on the plain text */
-        String IPBinary = "";
-        for (int i : IP) {
-          IPBinary += plainTextBinary.charAt(i - 1);
-        }
-
-        /* Divide the permuted block into two halves of 32 bits */
-        String LeftIPBinary = IPBinary.substring(0, 32);
-        String RightIPBinary = IPBinary.substring(32, 64);
-
-        /* Now, proceed through 16 Rounds/iterations using a function f */
-        //There are 16 keys thus 16 rounds, as expected
-        int counter = 1;
-        for (String k : RoundKeyArray) {
-//          pw.println();
-//          pw.println("                    64-bit " + wordCount + " ENCRYPTION ROUND " + counter + "                            ");
-//          pw.println("KEY = " + k);
-
-          //Left block becomes right block of previous round
-          String LeftBlock = RightIPBinary;
-//          pw.println("LEFT BLOCK  = " + LeftBlock);
-
-          //Right block is previous left block XOR F(previous left block, round key)
-          //To calculate Right block we first expand 32 bit previous right block to 48 bits since the key is 48 bits
-          String expand = "";
-          for (int i : E) {
-            expand += RightIPBinary.charAt(i - 1);
-            //Each block of 4 original bits has been expanded to a block of 6 output bits
-          }
-
-          //XOR 'expand' and the key since they are now both 48 bits long
-          StringBuilder sb = new StringBuilder();
-          for (int i = 0; i < k.length(); i++) {
-            sb.append((k.charAt(i) ^ expand.charAt(i)));
-          }
-          String result = sb.toString();
-
-          //"S boxes": 8 groups of six bits return as 4 bits in order for the Left block to regain its original 32 bits size
-          //String binary = String.format("%8s", Integer.toBinaryString(currentByte)).replace(' ', '0');
-          String RB1 = result.substring(0, 6);
-          String row1 = String.valueOf(RB1.substring(0, 1) + RB1.substring(5, 6));
-          String col1 = String.valueOf(RB1.substring(1, 5));
-          int target = S1[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          String binaryTarget = String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB2 = result.substring(6, 12);
-          row1 = String.valueOf(RB2.substring(0, 1) + RB2.substring(5, 6));
-          col1 = String.valueOf(RB2.substring(1, 5));
-          target = S2[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB3 = result.substring(12, 18);
-          row1 = String.valueOf(RB3.substring(0, 1) + RB3.substring(5, 6));
-          col1 = String.valueOf(RB3.substring(1, 5));
-          target = S3[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB4 = result.substring(18, 24);
-          row1 = String.valueOf(RB4.substring(0, 1) + RB4.substring(5, 6));
-          col1 = String.valueOf(RB4.substring(1, 5));
-          target = S4[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB5 = result.substring(24, 30);
-          row1 = String.valueOf(RB5.substring(0, 1) + RB5.substring(5, 6));
-          col1 = String.valueOf(RB5.substring(1, 5));
-          target = S5[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB6 = result.substring(30, 36);
-          row1 = String.valueOf(RB6.substring(0, 1) + RB6.substring(5, 6));
-          col1 = String.valueOf(RB6.substring(1, 5));
-          target = S6[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB7 = result.substring(36, 42);
-          row1 = String.valueOf(RB7.substring(0, 1) + RB7.substring(5, 6));
-          col1 = String.valueOf(RB7.substring(1, 5));
-          target = S7[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-          String RB8 = result.substring(42, 48);
-          row1 = String.valueOf(RB8.substring(0, 1) + RB8.substring(5, 6));
-          col1 = String.valueOf(RB8.substring(1, 5));
-          target = S8[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-          //pw.println(binaryTarget);
-
-          //Lastly,to get f, permutate the output of the S-box(binaryTarget) using table P to obtain the final value
-          String function = "";
-          for (int d : P) {
-            function += binaryTarget.charAt(d - 1);
-          }
-
-          //Finally, Previous Left block XOR function value
-          sb = new StringBuilder();
-          for (int i = 0; i < LeftIPBinary.length(); i++) {
-            sb.append((LeftIPBinary.charAt(i) ^ function.charAt(i)));
-          }
-          result = sb.toString();
-
-          RightIPBinary = result;
-//          pw.println("RIGHT BLOCK = " + RightIPBinary);
-          result = "";
-
-          counter++;
-          if (counter > 16) {
-            // Reversely combine the two blocks to form a 64-bit block
-            result = RightIPBinary + LeftBlock;
-
-            finalResult = "";
-            //Final Permutation FP: The Inverse of the Initial permutation IP
-            for (int x : FP) {
-              finalResult += result.charAt(x - 1);
-            }
-            encipher += finalResult;
-            textEncipher += id == 1 && leftSpace != 0 ? intTostr(finalResult, 8).substring(leftSpace) : intTostr(finalResult, 8);
-          }
-          LeftIPBinary = LeftBlock;
-        }
-        end += 64;
-        start += 64;
-//        pw.println("CIPHER OF 64-bit " + wordCount + " = " + intTostr(finalResult, 8));
-//        pw.println("_________________________________________________________________________________");
-      }
-    }
-
-    String result = this.textEncipher;
-    this.textEncipher = "";
-
-    return result;
-  }
-
-  public String decrypt(final String encryptedText) {
-
-
-    String BinaryText = this.encipher;
-    int encipherLength = encipher.length();
-    int leftpadString = encipherLength % 64;
-    int loop = leftpadString != 0 ? encipherLength / 64 + 1 : encipherLength / 64;
-    int start = 0;
-    int end = 64;
-    for (int id = loop, wordCount = 1; id > 0; id--, wordCount++) {
-//      int leftpad = 64 - leftpadString;
-      end = encipherLength - start < 64 ? encipherLength : end;
-      String cipherTextBinary = BinaryText.substring(start, end);
-
-      /* Perform an Initial Permutation on the binary cipher text ==> binaryKey */
-      String IPBinary = "";
-      for (int i : IP) {
-        IPBinary += cipherTextBinary.charAt(i - 1);
-      }
-
-      /* Divide the permuted block into two halves of 32 bits */
-      String LeftIPBinary = IPBinary.substring(0, 32);
-      String RightIPBinary = IPBinary.substring(32, 64);
-
-      /* Proceed through 16 Rounds/iterations each using a unique function f */
-      //Go through the 16 keys in the REVERSE ORDER
-      int counter = 1;
-      String k;
-      for (int p = 15; p >= 0; p--) {
-        k = RoundKeyArray[p];
-
-        //Left block becomes right block of previous round
-        String LeftBlock = RightIPBinary;
-
-        //Right block is previous left block XOR F(previous left block, round key)
-        String expand = "";
-        for (int i : E) {
-          expand += RightIPBinary.charAt(i - 1);
-        }
-
-        //XOR 'expand' and the key since they are now both 48 bits long
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < k.length(); i++) {
-          sb.append((k.charAt(i) ^ expand.charAt(i)));
-        }
-        String result = sb.toString();
-
-        //"S boxes" 8 groups of six bits return as 4 bits this in  order to return to original 32 bits size
-        String RB1 = result.substring(0, 6);
-        String row1 = String.valueOf(RB1.substring(0, 1) + RB1.substring(5, 6));
-        String col1 = String.valueOf(RB1.substring(1, 5));
-        int target = S1[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        String binaryTarget = String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB2 = result.substring(6, 12);
-        row1 = String.valueOf(RB2.substring(0, 1) + RB2.substring(5, 6));
-        col1 = String.valueOf(RB2.substring(1, 5));
-        target = S2[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB3 = result.substring(12, 18);
-        row1 = String.valueOf(RB3.substring(0, 1) + RB3.substring(5, 6));
-        col1 = String.valueOf(RB3.substring(1, 5));
-        target = S3[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB4 = result.substring(18, 24);
-        row1 = String.valueOf(RB4.substring(0, 1) + RB4.substring(5, 6));
-        col1 = String.valueOf(RB4.substring(1, 5));
-        target = S4[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB5 = result.substring(24, 30);
-        row1 = String.valueOf(RB5.substring(0, 1) + RB5.substring(5, 6));
-        col1 = String.valueOf(RB5.substring(1, 5));
-        target = S5[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB6 = result.substring(30, 36);
-        row1 = String.valueOf(RB6.substring(0, 1) + RB6.substring(5, 6));
-        col1 = String.valueOf(RB6.substring(1, 5));
-        target = S6[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB7 = result.substring(36, 42);
-        row1 = String.valueOf(RB7.substring(0, 1) + RB7.substring(5, 6));
-        col1 = String.valueOf(RB7.substring(1, 5));
-        target = S7[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        String RB8 = result.substring(42, 48);
-        row1 = String.valueOf(RB8.substring(0, 1) + RB8.substring(5, 6));
-        col1 = String.valueOf(RB8.substring(1, 5));
-        target = S8[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-        binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-
-        //Lastly,to get f we permutate the output of the S-box using table P
-        String function = "";
-        for (int d : P) {
-          function += binaryTarget.charAt(d - 1);
-        }
-
-        //Finally, Previous Left block XOR function
-        sb = new StringBuilder();
-        for (int i = 0; i < LeftIPBinary.length(); i++) {
-          sb.append((LeftIPBinary.charAt(i) ^ function.charAt(i)));
-        }
-        result = sb.toString();
-
-        RightIPBinary = result;
-        result = "";
-
-        counter++;
-        if (counter > 16) {
-          //Reverse the order of the two blocks to form a 64-bit block
-          result = RightIPBinary + LeftBlock;
-
-          //Final Permutation: The inverse of the initial permutation
-          String finalResult = "";
-          for (int x : FP) {
-            finalResult += result.charAt(x - 1);
-          }
-
-          binaryDecipher += finalResult;
-          decipher += id == 1 && leftSpace != 0 ? intTostr(finalResult, 8).substring(leftSpace) : intTostr(finalResult, 8);
-//            pw.println("DECRYPTED CIPHER OF 64-bit " + wordCount + " = " + intTostr(finalResult, 8));
-        }
-        LeftIPBinary = LeftBlock;
-      }
-
-      end += 64;
-      start += 64;
-    }
-    //Display the original plain text
-//      pw.println("\nDECRYPTED CIPHER = " + binaryDecipher.replaceAll("(.{8})(?!$)", "$1 "));
-//      pw.println("DECRYPTED CIPHER IN PLAIN TEXT = " + decipher);
-    String result = this.decipher;
-    this.decipher = "";
-    this.binaryDecipher = "";
-
-    return result;
-  }
-
-  // DES can be used to encrypt all types of data like pictures and text
-//  public void Encryption() {
-//
-//    try {
-//
-//      final String keyZZZ = "qwertyui";
-//      final String plainText = "abcdefgh";
-//
-//      /******************************************** 1.SUB  KEYS ********************************************************
-//       ****************************************************************************************************************/
-//      pw.println("Enter 64-bit key: ");
-//      originalKey = keyZZZ;
-//      System.out.println("Original Key in Text: " + originalKey);
-//      String binaryKey = strTobin(originalKey);
-//
-//      System.out.println("Original Key in Binary: " + binaryKey);
-//      binaryKey = binaryKey.replace(" ", "");
-//      //Key should be atleast 8 characters long
-//
-//      /*Get the 56-bit permutation from the original key using PC-1*/
-//      for (int i : PC1) {
-//        permutatedKey += binaryKey.charAt(i - 1);
-//      }
-//      pw.println("56 bit Original key:    " + permutatedKey.replaceAll("(.{8})(?!$)", "$1 "));
-//
-//      /* Next, split this key into left and right halves, LK and RK, where each half has 28 bits. */
-//      String LK = permutatedKey.substring(0, 28);
-//      String RK = permutatedKey.substring(28, 56);
-//
-//      /* Now, perform 16 left circular shifts from the original LK and RK */
-//      String Lkey = LK;
-//      String Rkey = RK;
-//      pw.println();
-//      int Index = 0;
-//      for (int a : NumLeftShifts) {
-//        Lkey = CircularLeftShift(Lkey, a);
-//        Rkey = CircularLeftShift(Rkey, a);
-//        Keys[Index] = Lkey + Rkey;
-//        Index++;
-//      }
-//
-//      /* Then build the 16 48-bit sub keys using the PC-2 Permutation table */
-//      Index = 0;
-//      for (String key : Keys) {
-//        for (int j : PC2) {
-//          RoundKey += key.charAt(j - 1);
-//        }
-//        RoundKeyArray[Index] = RoundKey;
-//        Index++;
-//        RoundKey = "";
-//      }
-//
-//      /******************************************** 2.ENCODE  MESSAGE **************************************************
-//       ****************************************************************************************************************/
-//      pw.println("Enter Plain Text: ");
-//      originalKey = plainText;
-//      pw.println("Original Plain Text: " + originalKey);
-//      binaryKey = strTobin(originalKey);
-//      pw.println("Plain Text in Binary: " + binaryKey);
-//      binaryKey = binaryKey.replace(" ", "");
-//      String BinaryText = binaryKey;
-//
-//      // Use plainTextBinary to form a loop
-//      int plainTextLength = binaryKey.length();
-//      if (plainTextLength < 64) {
-//        pw.println("Your Plain text is " + plainTextLength + "-bits long. It must be atleast 64-bits(8 characters)");
-//        System.exit(0);
-//      } else {
-//        pw.println("_________________________________________________________________________________");
-//        int leftpadString = plainTextLength % 64;
-//        int loop = leftpadString != 0 ? plainTextLength / 64 + 1 : plainTextLength / 64;
-//        int start = 0;
-//        int end = 64;
-//        for (int id = loop, wordCount = 1; id > 0; id--, wordCount++) {
-//          int leftpad = 64 - leftpadString;
-//          leftSpace = leftpad % 64 != 0 ? leftpad / 8 : 0;
-//          end = plainTextLength - start < 64 ? plainTextLength : end;
-//          plainTextBinary = BinaryText.substring(start, end);
-//          while (plainTextBinary.length() != 64) {
-//            plainTextBinary = "0" + plainTextBinary;
-//          }
-//
-//          /* Make an Initial Permutation on the plain text */
-//          String IPBinary = "";
-//          for (int i : IP) {
-//            IPBinary += plainTextBinary.charAt(i - 1);
-//          }
-//
-//          /* Divide the permuted block into two halves of 32 bits */
-//          String LeftIPBinary = IPBinary.substring(0, 32);
-//          String RightIPBinary = IPBinary.substring(32, 64);
-//
-//          /* Now, proceed through 16 Rounds/iterations using a function f */
-//          //There are 16 keys thus 16 rounds, as expected
-//          int counter = 1;
-//          for (String k : RoundKeyArray) {
-//            pw.println();
-//            pw.println("                    64-bit " + wordCount + " ENCRYPTION ROUND " + counter + "                            ");
-//            pw.println("KEY = " + k);
-//
-//            //Left block becomes right block of previous round
-//            String LeftBlock = RightIPBinary;
-//            pw.println("LEFT BLOCK  = " + LeftBlock);
-//
-//            //Right block is previous left block XOR F(previous left block, round key)
-//            //To calculate Right block we first expand 32 bit previous right block to 48 bits since the key is 48 bits
-//            String expand = "";
-//            for (int i : E) {
-//              expand += RightIPBinary.charAt(i - 1);
-//              //Each block of 4 original bits has been expanded to a block of 6 output bits
-//            }
-//
-//            //XOR 'expand' and the key since they are now both 48 bits long
-//            StringBuilder sb = new StringBuilder();
-//            for (int i = 0; i < k.length(); i++) {
-//              sb.append((k.charAt(i) ^ expand.charAt(i)));
-//            }
-//            String result = sb.toString();
-//
-//            //"S boxes": 8 groups of six bits return as 4 bits in order for the Left block to regain its original 32 bits size
-//            //String binary = String.format("%8s", Integer.toBinaryString(currentByte)).replace(' ', '0');
-//            String RB1 = result.substring(0, 6);
-//            String row1 = String.valueOf(RB1.substring(0, 1) + RB1.substring(5, 6));
-//            String col1 = String.valueOf(RB1.substring(1, 5));
-//            int target = S1[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            String binaryTarget = String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB2 = result.substring(6, 12);
-//            row1 = String.valueOf(RB2.substring(0, 1) + RB2.substring(5, 6));
-//            col1 = String.valueOf(RB2.substring(1, 5));
-//            target = S2[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB3 = result.substring(12, 18);
-//            row1 = String.valueOf(RB3.substring(0, 1) + RB3.substring(5, 6));
-//            col1 = String.valueOf(RB3.substring(1, 5));
-//            target = S3[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB4 = result.substring(18, 24);
-//            row1 = String.valueOf(RB4.substring(0, 1) + RB4.substring(5, 6));
-//            col1 = String.valueOf(RB4.substring(1, 5));
-//            target = S4[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB5 = result.substring(24, 30);
-//            row1 = String.valueOf(RB5.substring(0, 1) + RB5.substring(5, 6));
-//            col1 = String.valueOf(RB5.substring(1, 5));
-//            target = S5[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB6 = result.substring(30, 36);
-//            row1 = String.valueOf(RB6.substring(0, 1) + RB6.substring(5, 6));
-//            col1 = String.valueOf(RB6.substring(1, 5));
-//            target = S6[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB7 = result.substring(36, 42);
-//            row1 = String.valueOf(RB7.substring(0, 1) + RB7.substring(5, 6));
-//            col1 = String.valueOf(RB7.substring(1, 5));
-//            target = S7[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//            String RB8 = result.substring(42, 48);
-//            row1 = String.valueOf(RB8.substring(0, 1) + RB8.substring(5, 6));
-//            col1 = String.valueOf(RB8.substring(1, 5));
-//            target = S8[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//            binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//            //pw.println(binaryTarget);
-//
-//            //Lastly,to get f, permutate the output of the S-box(binaryTarget) using table P to obtain the final value
-//            String function = "";
-//            for (int d : P) {
-//              function += binaryTarget.charAt(d - 1);
-//            }
-//
-//            //Finally, Previous Left block XOR function value
-//            sb = new StringBuilder();
-//            for (int i = 0; i < LeftIPBinary.length(); i++) {
-//              sb.append((LeftIPBinary.charAt(i) ^ function.charAt(i)));
-//            }
-//            result = sb.toString();
-//
-//            RightIPBinary = result;
-//            pw.println("RIGHT BLOCK = " + RightIPBinary);
-//            result = "";
-//
-//            counter++;
-//            if (counter > 16) {
-//              // Reversely combine the two blocks to form a 64-bit block
-//              result = RightIPBinary + LeftBlock;
-//
-//              finalResult = "";
-//              //Final Permutation FP: The Inverse of the Initial permutation IP
-//              for (int x : FP) {
-//                finalResult += result.charAt(x - 1);
-//              }
-//              encipher += finalResult;
-//              textEncipher += id == 1 && leftSpace != 0 ? intTostr(finalResult, 8).substring(leftSpace) : intTostr(finalResult, 8);
-//            }
-//            LeftIPBinary = LeftBlock;
-//          }
-//          end += 64;
-//          start += 64;
-//          pw.println("CIPHER OF 64-bit " + wordCount + " = " + intTostr(finalResult, 8));
-//          pw.println("_________________________________________________________________________________");
-//        }
-//        //Display the final cipher text
-//        pw.println("\nCIPHER = " + encipher.replaceAll("(.{8})(?!$)", "$1 "));
-//        pw.println("CIPHER IN PLAIN TEXT= " + textEncipher);
-//      }
-//
-//
-//      /************************************************ 3. DECRYPTION *************************************************
-//       ****************************************************************************************************************/
-//      pw.println("");
-//      pw.println("********************************************************************************************************************");
-//      pw.println("********************************************************************************************************************");
-//      BinaryText = encipher;
-//
-//      // Use encipher to form a loop
-//      int encipherLength = encipher.length();
-//      int leftpadString = encipherLength % 64;
-//      int loop = leftpadString != 0 ? encipherLength / 64 + 1 : encipherLength / 64;
-//      int start = 0;
-//      int end = 64;
-//      pw.println("_________________________________________________________________________________");
-//      for (int id = loop, wordCount = 1; id > 0; id--, wordCount++) {
-//        int leftpad = 64 - leftpadString;
-//        end = encipherLength - start < 64 ? encipherLength : end;
-//        String cipherTextBinary = BinaryText.substring(start, end);
-//
-//        /* Perform an Initial Permutation on the binary cipher text ==> binaryKey */
-//        String IPBinary = "";
-//        for (int i : IP) {
-//          IPBinary += cipherTextBinary.charAt(i - 1);
-//        }
-//
-//        /* Divide the permuted block into two halves of 32 bits */
-//        String LeftIPBinary = IPBinary.substring(0, 32);
-//        String RightIPBinary = IPBinary.substring(32, 64);
-//
-//        /* Proceed through 16 Rounds/iterations each using a unique function f */
-//        //Go through the 16 keys in the REVERSE ORDER
-//        int counter = 1;
-//        String k;
-//        for (int p = 15; p >= 0; p--) {
-//          pw.println();
-//          pw.println("                    64-bit " + wordCount + " DECRYPTION ROUND " + counter + "                            ");
-//          k = RoundKeyArray[p];
-//          pw.println("KEY = " + k);
-//
-//          //Left block becomes right block of previous round
-//          String LeftBlock = RightIPBinary;
-//          pw.println("LEFT BLOCK  = " + LeftBlock);
-//
-//          //Right block is previous left block XOR F(previous left block, round key)
-//          String expand = "";
-//          for (int i : E) {
-//            expand += RightIPBinary.charAt(i - 1);
-//          }
-//
-//          //XOR 'expand' and the key since they are now both 48 bits long
-//          StringBuilder sb = new StringBuilder();
-//          for (int i = 0; i < k.length(); i++) {
-//            sb.append((k.charAt(i) ^ expand.charAt(i)));
-//          }
-//          String result = sb.toString();
-//
-//          //"S boxes" 8 groups of six bits return as 4 bits this in  order to return to original 32 bits size
-//          String RB1 = result.substring(0, 6);
-//          String row1 = String.valueOf(RB1.substring(0, 1) + RB1.substring(5, 6));
-//          String col1 = String.valueOf(RB1.substring(1, 5));
-//          int target = S1[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          String binaryTarget = String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB2 = result.substring(6, 12);
-//          row1 = String.valueOf(RB2.substring(0, 1) + RB2.substring(5, 6));
-//          col1 = String.valueOf(RB2.substring(1, 5));
-//          target = S2[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB3 = result.substring(12, 18);
-//          row1 = String.valueOf(RB3.substring(0, 1) + RB3.substring(5, 6));
-//          col1 = String.valueOf(RB3.substring(1, 5));
-//          target = S3[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB4 = result.substring(18, 24);
-//          row1 = String.valueOf(RB4.substring(0, 1) + RB4.substring(5, 6));
-//          col1 = String.valueOf(RB4.substring(1, 5));
-//          target = S4[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB5 = result.substring(24, 30);
-//          row1 = String.valueOf(RB5.substring(0, 1) + RB5.substring(5, 6));
-//          col1 = String.valueOf(RB5.substring(1, 5));
-//          target = S5[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB6 = result.substring(30, 36);
-//          row1 = String.valueOf(RB6.substring(0, 1) + RB6.substring(5, 6));
-//          col1 = String.valueOf(RB6.substring(1, 5));
-//          target = S6[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB7 = result.substring(36, 42);
-//          row1 = String.valueOf(RB7.substring(0, 1) + RB7.substring(5, 6));
-//          col1 = String.valueOf(RB7.substring(1, 5));
-//          target = S7[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          String RB8 = result.substring(42, 48);
-//          row1 = String.valueOf(RB8.substring(0, 1) + RB8.substring(5, 6));
-//          col1 = String.valueOf(RB8.substring(1, 5));
-//          target = S8[Integer.parseInt(row1, 2)][Integer.parseInt(col1, 2)];
-//          binaryTarget += String.format("%4s", Integer.toBinaryString(target)).replace(' ', '0');
-//
-//          //Lastly,to get f we permutate the output of the S-box using table P
-//          String function = "";
-//          for (int d : P) {
-//            function += binaryTarget.charAt(d - 1);
-//          }
-//
-//          //Finally, Previous Left block XOR function
-//          sb = new StringBuilder();
-//          for (int i = 0; i < LeftIPBinary.length(); i++) {
-//            sb.append((LeftIPBinary.charAt(i) ^ function.charAt(i)));
-//          }
-//          result = sb.toString();
-//
-//          RightIPBinary = result;
-//          pw.println("RIGHT BLOCK = " + RightIPBinary);
-//          result = "";
-//
-//          counter++;
-//          if (counter > 16) {
-//            //Reverse the order of the two blocks to form a 64-bit block
-//            result = RightIPBinary + LeftBlock;
-//
-//            //Final Permutation: The inverse of the initial permutation
-//            String finalResult = "";
-//            for (int x : FP) {
-//              finalResult += result.charAt(x - 1);
-//            }
-//
-//            binaryDecipher += finalResult;
-//            decipher += id == 1 && leftSpace != 0 ? intTostr(finalResult, 8).substring(leftSpace) : intTostr(finalResult, 8);
-//            pw.println("DECRYPTED CIPHER OF 64-bit " + wordCount + " = " + intTostr(finalResult, 8));
-//          }
-//          LeftIPBinary = LeftBlock;
-//        }
-//
-//        end += 64;
-//        start += 64;
-//        pw.println("_________________________________________________________________________________");
-//      }
-//      //Display the original plain text
-//      pw.println("\nDECRYPTED CIPHER = " + binaryDecipher.replaceAll("(.{8})(?!$)", "$1 "));
-//      pw.println("DECRYPTED CIPHER IN PLAIN TEXT = " + decipher);
-//
-//      pw.println("\n\n\t\t\t\tTHANKS FOR USING MY PROGRAM!\n\n");
-//
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-//  }
-
-  /* Convert string to binary string */
-  public String strTobin(String str) {
-
-    byte[] bytes = str.getBytes();
-    StringBuilder binary = new StringBuilder();
-    for (byte b : bytes) {
-      int val = b;
-      for (int i = 0; i < 8; i++) {
-        binary.append((val & 128) == 0 ? 0 : 1);
-        val <<= 1;
-      }
-      binary.append(' ');
-    }
-    return binary.toString();
-  }
-
-  /* Convert integer to String */
-  public String intTostr(String stream, int size) {
-
+  private String rawStringToHexString(final String rawString){
     String result = "";
-    for (int i = 0; i < stream.length(); i += size) {
-      result += (stream.substring(i, Math.min(stream.length(), i + size)) + " ");
-    }
-    String[] ss = result.split(" ");
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < ss.length; i++) {
-      sb.append((char) Integer.parseInt(ss[i], 2));
-    }
-    return sb.toString();
-  }
-
-  /* Left shift function */
-  String CircularLeftShift(String s, int k) {
-
-    String result = s.substring(k);
-    for (int i = 0; i < k; i++) {
-      result += s.charAt(i);
+    for(char ch : rawString.toCharArray()){
+      result += String.format("%X", (byte)ch);
     }
     return result;
   }
 
+
+  private byte[] performXOR(byte[] one, byte[] two) {
+    byte[] result = new byte[one.length];
+    for (int i = 0; i < one.length; i++) {
+      result[i] = (byte) (one[i] ^ two[i]);
+    }
+    return result;
+  }
+
+  private byte[] permute(byte[] input, int[] mapping) {
+    int byteCount = 1 + (mapping.length - 1) / 8;
+    byte[] output = new byte[byteCount];
+    int pos;
+
+    for (int i = 0; i < mapping.length; i++) {
+      pos = mapping[i] - 1;
+      int value = getBitFromArray(input, pos);
+      setBitInArray(output, i, value);
+    }
+    return output;
+  }
+
+  private int getBitFromArray(byte[] array, int pos) {
+    int value;
+    int bytePos = pos / 8;
+    int bitPos = pos % 8;
+    value = (array[bytePos] >> (8 - (bitPos + 1))) & 0x0001;
+    /* eg: right shift selected byte 5 times to get 3rd bit
+     * (bitPos = 2) at rightmost position and
+     * then AND with 0x0001*/
+    return value;
+  }
+
+  private void setBitInArray(byte[] input, int pos, int value) {
+    int bytePos = pos / 8;
+    int bitPos = pos % 8;
+    byte old = input[bytePos];
+    old = (byte) (((0xFF7F >> bitPos) & old) & 0x00FF);
+    byte newByte = (byte) ((value << (8 - (bitPos + 1))) | old);
+    input[bytePos] = newByte;
+  }
+
+  byte[] hexStringToByteArray(String string) {
+    int length = string.length();
+    int n = (int) Math.ceil((length + 1) / 2);
+    byte[] result = new byte[n];
+    for (int i = length - 1; i >= 0; i -= 2) {
+      if (i == 0) {
+        result[i / 2] = (byte) ((Character.digit('0', 16) << 4)
+            + Character.digit(string.charAt(i), 16));
+      } else {
+        result[i / 2] = (byte) ((Character.digit(string.charAt(i - 1), 16) << 4)
+            + Character.digit(string.charAt(i), 16));
+      }
+    }
+    return result;
+  }
+
+  void printBytes(byte[] input) {
+    for (int i = 0; i < input.length; i++) {
+      System.out.print(byteToBits(input[i]) + " ");
+    }
+    System.out.println();
+  }
+
+  private String byteToBits(byte b) {
+    StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i < 8; i++)
+      buffer.append((int) (b >> (8 - (i + 1)) & 0x0001));
+    return buffer.toString();
+  }
+
+  private byte[] getBits(byte[] input, int startPos, int length) {
+    int noOfBytes = (length - 1) / 8 + 1;
+    byte[] output = new byte[noOfBytes];
+    for (int i = 0; i < length; i++) {
+      int value = getBitFromArray(input, startPos + i);
+      setBitInArray(output, i, value);
+    }
+    return output;
+  }
+
+  private byte[] rotateLeft(byte[] input, int step, int length) {
+    int noOfBytes = (length - 1) / 8 + 1;
+    byte[] output = new byte[noOfBytes];
+    for (int i = 0; i < length; i++) {
+      int value = getBitFromArray(input, (i + step) % length);
+      setBitInArray(output, i, value);
+    }
+    return output;
+  }
+
+  private byte[] concatBits(byte[] one, int oneLength,
+                            byte[] two, int twoLength) {
+    int noOfBytes = (oneLength + twoLength - 1) / 8 + 1;
+    byte[] output = new byte[noOfBytes];
+    int i = 0, j = 0;
+    for (; i < oneLength; i++) {
+      int value = getBitFromArray(one, i);
+      setBitInArray(output, j, value);
+      j++;
+    }
+    for (i = 0; i < twoLength; i++) {
+      int value = getBitFromArray(two, i);
+      setBitInArray(output, j, value);
+      j++;
+    }
+    return output;
+  }
+
+  private byte[][] getSubKeys(byte[] masterKey) {
+    int noOfSubKeys = SHIFTS.length;
+    int keySize = PC1.length;
+    byte[] key = permute(masterKey, PC1);
+    byte[][] subKeys = new byte[noOfSubKeys][keySize];
+    byte[] leftHalf = getBits(key, 0, keySize / 2);
+    byte[] rightHalf = getBits(key, keySize / 2, keySize / 2);
+    for (int i = 0; i < noOfSubKeys; i++) {
+      leftHalf = rotateLeft(leftHalf, SHIFTS[i], keySize / 2);
+      rightHalf = rotateLeft(rightHalf, SHIFTS[i], keySize / 2);
+      byte[] subKey = concatBits(leftHalf, keySize / 2, rightHalf, keySize / 2);
+      subKeys[i] = permute(subKey, PC2);
+    }
+    return subKeys;
+  }
+
+  public byte[] crypt(byte[] message, byte[] key, String operation) {
+    if (message.length < 8) {
+      System.out.println("Message should be atleast 64 bits");
+      System.exit(1);
+    }
+    if (key.length != 8) {
+      System.out.println("Key should be 64 bits");
+      System.exit(1);
+    }
+    int length = message.length;
+    int n = (length + 7) / 8 * 8;
+    byte[] cipher = new byte[n];
+    if (length == 8) {
+      return cryptText(message, key, operation);
+    }
+    int i = 0;
+    int k = 0;
+    while (i < length) {
+      byte[] block = new byte[8];
+      byte[] result = new byte[8];
+      int j = 0;
+      for (; j < 8 && i < length; j++, i++) {
+        block[j] = message[i];
+      }
+      while (j < 8) {
+        block[j++] = 0x00;
+      }
+      System.out.println("BLOCK: ");
+      printBytes(block);
+      result = cryptText(block, key, operation);
+      System.out.println("RESULT: ");
+      printBytes(result);
+      for (j = 0; j < 8 && k < cipher.length; j++, k++) {
+        cipher[k] = result[j];
+      }
+    }
+    return cipher;
+  }
+
+  public byte[] cryptText(byte[] message, byte[] key, String operation) {
+    if (message.length != 8) {
+      System.out.println("Message should be 64 bits");
+      System.exit(1);
+    }
+    if (key.length != 8) {
+      System.out.println("Key should be 64 bits");
+      System.exit(1);
+    }
+    byte[] result = null;
+    int blockSize = IP.length;
+    byte[][] subKeys = getSubKeys(key);
+    int noOfRounds = subKeys.length;
+    /**
+     * Initial Permutation
+     */
+    message = permute(message, IP);
+    /**
+     * Split message into two halves
+     */
+    byte[] leftHalf = getBits(message, 0, blockSize / 2);
+    byte[] rightHalf = getBits(message, blockSize / 2, blockSize / 2);
+    for (int i = 0; i < noOfRounds; i++) {
+      byte[] temp = rightHalf;
+      /**
+       * Expansion
+       */
+      rightHalf = permute(rightHalf, E);
+      /**
+       * XOR rightHalf with roundKey
+       */
+      byte[] roundKey = null;
+      if (operation.equalsIgnoreCase("encrypt")) {
+        roundKey = subKeys[i];
+      } else if (operation.equalsIgnoreCase("decrypt")) {
+        roundKey = subKeys[noOfRounds - i - 1];
+      } else {
+        System.out.println("Unsupported operation");
+        System.exit(0);
+      }
+      rightHalf = performXOR(rightHalf, roundKey);
+      /**
+       * S-Box
+       */
+      rightHalf = sBox(rightHalf);
+      /**
+       * Permutation
+       */
+      rightHalf = permute(rightHalf, P);
+      /**
+       * XOR rightHalf with leftHalf
+       */
+      rightHalf = performXOR(rightHalf, leftHalf);
+      /**
+       * L(i) = R(i-1)
+       */
+      leftHalf = temp;
+    }
+    /**
+     * 32 bit swap
+     */
+    byte[] concatHalves = concatBits(rightHalf, blockSize / 2, leftHalf, blockSize / 2);
+    /**
+     * Inverse Initial Permutation
+     */
+    result = permute(concatHalves, IIP);
+    return result;
+  }
+
+  private byte[] sBox(byte[] input) {
+    /**
+     * Split input to 6-bit blocks
+     */
+    input = split(input, 6);
+    byte[] output = new byte[input.length / 2];
+    int leftHalf = 0;
+    for (int i = 0; i < input.length; i++) {
+      byte block = input[i];
+      /**
+       * row - first and last bits
+       * column - 4 bits in the middle
+       */
+      int row = 2 * (block >> 7 & 0x0001) + (block >> 2 & 0x0001);
+      int col = block >> 3 & 0x000F;
+      int[] selectedSBox = getSBox(i);
+      int rightHalf = selectedSBox[16 * row + col];
+      if (i % 2 == 0) {
+        leftHalf = rightHalf;
+      } else {
+        output[i / 2] = (byte) (16 * leftHalf + rightHalf);
+        leftHalf = 0;
+      }
+    }
+    return output;
+  }
+
+  private int[] getSBox(int i) {
+    switch (i) {
+      case 0:
+        return S1;
+      case 1:
+        return S2;
+      case 2:
+        return S3;
+      case 3:
+        return S4;
+      case 4:
+        return S5;
+      case 5:
+        return S6;
+      case 6:
+        return S7;
+      case 7:
+        return S8;
+      default:
+        return null;
+    }
+  }
+
+  private byte[] split(byte[] input, int length) {
+    int noOfBytes = (8 * input.length - 1) / length + 1;
+    byte[] output = new byte[noOfBytes];
+    for (int i = 0; i < noOfBytes; i++) {
+      for (int j = 0; j < length; j++) {
+        int value = getBitFromArray(input, length * i + j);
+        setBitInArray(output, 8 * i + j, value);
+      }
+    }
+    return output;
+  }
 
 }
+
