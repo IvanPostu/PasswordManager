@@ -124,7 +124,7 @@ public class DESAlgorithm {
       1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
   };
 
-  public DESAlgorithmModel encryptPlainText(
+  public String encryptPlainText(
       final String key,
       String plainText)
       throws Exception {
@@ -142,7 +142,7 @@ public class DESAlgorithm {
       final int num = 8 - additional;
       StringBuilder plainTextBuilder = new StringBuilder(plainText);
       for(int i = 0; i<num; i++){
-        plainTextBuilder.append((char)'0');
+        plainTextBuilder.append('0');
       }
       plainText = plainTextBuilder.toString();
     }
@@ -168,17 +168,13 @@ public class DESAlgorithm {
       for(byte b : cipher){
         result += String.format("%X", b);
       }
-
-
-//      byte[] zzz =  this.hexStringToByteArray(result);
-
     }
 
 
-    return new DESAlgorithmModel(result, plainText.substring(0, plainTextLength), plainTextLength);
+    return result;
   }
 
-  public DESAlgorithmModel decryptPlainText(
+  public String decryptPlainText(
       final String key,
       String encryptedText)
       throws Exception {
@@ -209,7 +205,7 @@ public class DESAlgorithm {
       for(byte b : decryptedBytes) result += (char)b;
     }
 
-
+    System.out.println(result);
 
     return result;
   }
@@ -348,7 +344,7 @@ public class DESAlgorithm {
     return subKeys;
   }
 
-  public byte[] crypt(byte[] message, byte[] key, String operation) {
+  private byte[] crypt(byte[] message, byte[] key, String operation) {
     if (message.length < 8) {
       System.out.println("Message should be atleast 64 bits");
       System.exit(1);
@@ -387,7 +383,7 @@ public class DESAlgorithm {
     return cipher;
   }
 
-  public byte[] cryptText(byte[] message, byte[] key, String operation) {
+  private byte[] cryptText(byte[] message, byte[] key, String operation) {
     if (message.length != 8) {
       System.out.println("Message should be 64 bits");
       System.exit(1);
