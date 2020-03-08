@@ -14,24 +14,22 @@ public class DESAlgorithmTest {
   };
 
   private final String messages[] = {
-      "12345678",
-
+      "Any fool can write code that a computer can understand. " +
+          "Good programmers write code than humans can understand.",
+      "Code is like humor. When you have to explain it, it\'s bad.",
+      "First, solve the problem. Then, write the code.",
+      "Programming is the art of telling another human what one wants the computer to do.",
+      "Don\'t comment bad code - rewrite it.",
   };
 
   @Test
   public void StringToHexAndHexToStringTest() throws Exception {
-    final String messages[] = {
-        "qwertyui iuu 98afu98adu9f8 adu89 fadf uda9f adu9f aduf9 aud9f ",
-        "8uUUzml1adfi ueuqu f28eu f98uq89fu8 uquf 8u q89uf89q ue89uf uqefu qe98uqe",
-        "ADFHJADH FJADK FADHF HJADHFK DAHF 42Y2 F72Y4F H24FH24HF 24F24",
-        "F2 4UHUFH2 4HF24 HFH42H FU24HFUI24FHI 24HUIFH 24IUF HIU42HF U42IHF 42H U24HU 27y4724y7472",
-        "11"
-    };
+    final String localMessages[] = messages.clone();
 
     byte[] bytes = {2, 3, 4, 5, 6, 7, 8, 88, 99};
-    for (byte b : bytes) messages[4] += (char) b;
+    for (byte b : bytes) localMessages[0] += (char) b;
 
-    for (String s : messages) {
+    for (String s : localMessages) {
       String hex = DESAlgorithm.rawStringToHexString(s);
       String raw = DESAlgorithm.hexStringToRawString(hex);
 
@@ -47,6 +45,7 @@ public class DESAlgorithmTest {
       final String key = keys[i];
       for (int j = 0; j < messages.length; j++) {
         final String message = messages[j];
+        final int initialMessageLength = message.length() * 2;
 
         String messageInHex = DESAlgorithm.rawStringToHexString(message);
 
@@ -56,7 +55,7 @@ public class DESAlgorithmTest {
 
         String decrypted = DESAlgorithm.execute(encrypted,
             DESAlgorithm.rawStringToHexString(key),
-            DESAlgorithm.Type.DECRYPT);
+            DESAlgorithm.Type.DECRYPT).substring(0, initialMessageLength);
 
         if(!messageInHex.equals(decrypted)) throw  new Exception("The DES Algorithm doesn't work correctly!!!");
 
