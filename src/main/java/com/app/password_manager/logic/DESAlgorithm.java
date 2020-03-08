@@ -3,9 +3,9 @@ package com.app.password_manager.logic;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class DESAlgorithm {
-  /* Initial Permutation */
-  static final int[] IP = {
+class DESAlgorithm {
+  // Initial Permutation table
+  private static final byte[] IP = {
       58, 50, 42, 34, 26, 18, 10, 2,
       60, 52, 44, 36, 28, 20, 12, 4,
       62, 54, 46, 38, 30, 22, 14, 6,
@@ -15,90 +15,9 @@ public class DESAlgorithm {
       61, 53, 45, 37, 29, 21, 13, 5,
       63, 55, 47, 39, 31, 23, 15, 7
   };
-  /* Inverse Initial Permutation */
-  static final int[] IIP = {
-      40, 8, 48, 16, 56, 24, 64, 32,
-      39, 7, 47, 15, 55, 23, 63, 31,
-      38, 6, 46, 14, 54, 22, 62, 30,
-      37, 5, 45, 13, 53, 21, 61, 29,
-      36, 4, 44, 12, 52, 20, 60, 28,
-      35, 3, 43, 11, 51, 19, 59, 27,
-      34, 2, 42, 10, 50, 18, 58, 26,
-      33, 1, 41, 9, 49, 17, 57, 25
-  };
-  /* Expansion Permutation */
-  static final int[] E = {
-      32, 1, 2, 3, 4, 5,
-      4, 5, 6, 7, 8, 9,
-      8, 9, 10, 11, 12, 13,
-      12, 13, 14, 15, 16, 17,
-      16, 17, 18, 19, 20, 21,
-      20, 21, 22, 23, 24, 25,
-      24, 25, 26, 27, 28, 29,
-      28, 29, 30, 31, 32, 1
-  };
-  /* Permutation Function */
-  static final int[] P = {
-      16, 7, 20, 21,
-      29, 12, 28, 17,
-      1, 15, 23, 26,
-      5, 18, 31, 10,
-      2, 8, 24, 14,
-      32, 27, 3, 9,
-      19, 13, 30, 6,
-      22, 11, 4, 25
-  };
-  /* S-Boxes*/
-  static final int[] S1 = {
-      14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
-      0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8,
-      4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0,
-      15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13
-  };
-  static final int[] S2 = {
-      15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10,
-      3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5,
-      0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15,
-      13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9
-  };
-  static final int[] S3 = {
-      10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8,
-      13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1,
-      13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7,
-      1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12
-  };
-  static final int[] S4 = {
-      7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15,
-      13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9,
-      10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4,
-      3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14
-  };
-  static final int[] S5 = {
-      2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9,
-      14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6,
-      4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14,
-      11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3
-  };
-  static final int[] S6 = {
-      12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11,
-      10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8,
-      9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6,
-      4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13
-  };
-  static final int[] S7 = {
-      4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1,
-      13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6,
-      1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2,
-      6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12
-  };
-  static final int[] S8 = {
-      13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7,
-      1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2,
-      7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
-      2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
-  };
-  /* Permuted Choice One */
-  static final int[] PC1 = {
+
+  // Permuted Choice 1 table
+  private static final byte[] PC1 = {
       57, 49, 41, 33, 25, 17, 9,
       1, 58, 50, 42, 34, 26, 18,
       10, 2, 59, 51, 43, 35, 27,
@@ -108,8 +27,9 @@ public class DESAlgorithm {
       14, 6, 61, 53, 45, 37, 29,
       21, 13, 5, 28, 20, 12, 4
   };
-  /* Permuted Choice Two */
-  static final int[] PC2 = {
+
+  // Permuted Choice 2 table
+  private static final byte[] PC2 = {
       14, 17, 11, 24, 1, 5,
       3, 28, 15, 6, 21, 10,
       23, 19, 12, 4, 26, 8,
@@ -119,400 +39,354 @@ public class DESAlgorithm {
       44, 49, 39, 56, 34, 53,
       46, 42, 50, 36, 29, 32
   };
-  /* Schedule of Left Shifts */
-  static final int[] SHIFTS = {
+
+  // Array to store the number of rotations that are to be done on each round
+  private static final byte[] rotations = {
       1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
   };
 
-  public String encryptPlainText(
-      final String key,
-      String plainText)
-      throws Exception {
+  // Expansion (aka P-box) table
+  private static final byte[] E = {
+      32, 1, 2, 3, 4, 5,
+      4, 5, 6, 7, 8, 9,
+      8, 9, 10, 11, 12, 13,
+      12, 13, 14, 15, 16, 17,
+      16, 17, 18, 19, 20, 21,
+      20, 21, 22, 23, 24, 25,
+      24, 25, 26, 27, 28, 29,
+      28, 29, 30, 31, 32, 1
+  };
 
-    if (key.length() != 8) {
-      throw new Exception("Required key length is 8");
+  // S-boxes (i.e. Substitution boxes)
+  private static final byte[][] S = {{
+      14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
+      0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8,
+      4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0,
+      15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13
+  }, {
+      15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10,
+      3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5,
+      0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15,
+      13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9
+  }, {
+      10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8,
+      13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1,
+      13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7,
+      1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12
+  }, {
+      7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15,
+      13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9,
+      10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4,
+      3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14
+  }, {
+      2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9,
+      14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6,
+      4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14,
+      11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3
+  }, {
+      12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11,
+      10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8,
+      9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6,
+      4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13
+  }, {
+      4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1,
+      13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6,
+      1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2,
+      6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12
+  }, {
+      13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7,
+      1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2,
+      7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
+      2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
+  }};
+
+  // Permutation table
+  private static final byte[] P = {
+      16, 7, 20, 21,
+      29, 12, 28, 17,
+      1, 15, 23, 26,
+      5, 18, 31, 10,
+      2, 8, 24, 14,
+      32, 27, 3, 9,
+      19, 13, 30, 6,
+      22, 11, 4, 25
+  };
+
+  // Final permutation (aka Inverse permutation) table
+  private static final byte[] FP = {
+      40, 8, 48, 16, 56, 24, 64, 32,
+      39, 7, 47, 15, 55, 23, 63, 31,
+      38, 6, 46, 14, 54, 22, 62, 30,
+      37, 5, 45, 13, 53, 21, 61, 29,
+      36, 4, 44, 12, 52, 20, 60, 28,
+      35, 3, 43, 11, 51, 19, 59, 27,
+      34, 2, 42, 10, 50, 18, 58, 26,
+      33, 1, 41, 9, 49, 17, 57, 25
+  };
+
+  // 28 bits each, used as storage in the KS (Key Structure) rounds to
+  // generate round keys (aka subkeys)
+  private static int[] C = new int[28];
+  private static int[] D = new int[28];
+
+
+  private static int[][] subkey = new int[16][48];
+
+  public enum Type {
+    ENCRYPT, DECRYPT
+  }
+
+  ;
+
+  public static String rawStringToHexString(String rawText) {
+    StringBuilder stringBuilder = new StringBuilder();
+    for (byte b : rawText.getBytes()) stringBuilder.append(String.format("%2X", b));
+
+    return stringBuilder.toString();
+  }
+
+  public static String hexStringToRawString(String hexString) {
+
+    String str = "";
+    for (int i = 0; i < hexString.length(); i += 2) {
+      String s = "";
+      if (hexString.toCharArray()[i] == ' ')
+        s = hexString.substring(i+1, (i + 2));
+      else
+        s = hexString.substring(i, (i + 2));
+
+      int decimal = Integer.parseInt(s, 16);
+      str = str + (char) decimal;
     }
+    return str;
+  }
 
-    final int plainTextLength = plainText.length();
-    final int additional = plainTextLength % 8;
-    final int hexBlocksSize = plainTextLength / 8 + (additional == 0 ? 0 : 1);
-    String[] hexBlocks = new String[hexBlocksSize];
+  public static void execute(String hexRawText, String hexKey, Type type) {
 
-    if(additional != 0){
-      final int num = 8 - additional;
-      StringBuilder plainTextBuilder = new StringBuilder(plainText);
-      for(int i = 0; i<num; i++){
-        plainTextBuilder.append('0');
+
+    int inputBits[] = new int[64];
+    for (int i = 0; i < 16; i++) {
+      String s = Integer.toBinaryString(Integer.parseInt(hexRawText.charAt(i) + "", 16));
+
+
+      while (s.length() < 4) {
+        s = "0" + s;
       }
-      plainText = plainTextBuilder.toString();
-    }
-
-    for (int i = 0; i < hexBlocksSize; i++) {
-      hexBlocks[i] = "";
-      for (int j = 0; j < 8; j++) {
-        hexBlocks[i] += plainText.substring((i * 8) + j, (i * 8) + j + 1);
+      for (int j = 0; j < 4; j++) {
+        inputBits[(4 * i) + j] = Integer.parseInt(s.charAt(j) + "");
       }
     }
 
-    for(int i=0; i<hexBlocksSize; i++){
-      hexBlocks[i] = this.rawStringToHexString(hexBlocks[i]);
-    }
-
-    final String hexKey = rawStringToHexString(key);
-    String result = "";
-
-    for(String s : hexBlocks){
-      byte[] cipher = this.crypt(this.hexStringToByteArray(s),
-          this.hexStringToByteArray(hexKey), "encrypt");
-
-      for(byte b : cipher){
-        result += String.format("%X", b);
+    int keyBits[] = new int[64];
+    for (int i = 0; i < 16; i++) {
+      String s = Integer.toBinaryString(Integer.parseInt(hexKey.charAt(i) + "", 16));
+      while (s.length() < 4) {
+        s = "0" + s;
+      }
+      for (int j = 0; j < 4; j++) {
+        keyBits[(4 * i) + j] = Integer.parseInt(s.charAt(j) + "");
       }
     }
 
-
-    return result;
+    System.out.println("\n+++ ENCRYPTION +++");
+    int outputBits[] = permute(inputBits, keyBits, false);
+    System.out.println("\n+++ DECRYPTION +++");
+    permute(outputBits, keyBits, true);
   }
 
-  public String decryptPlainText(
-      final String key,
-      String encryptedText)
-      throws Exception {
-
-    if (key.length() != 8) {
-      throw new Exception("Required key length is 8");
+  private static int[] permute(int[] inputBits, int[] keyBits, boolean isDecrypt) {
+    // Initial permutation step takes input bits and permutes into the
+    // newBits array
+    int newBits[] = new int[inputBits.length];
+    for (int i = 0; i < inputBits.length; i++) {
+      newBits[i] = inputBits[IP[i] - 1];
     }
 
-    final int SEPARATOR = 16;
-    final int encryptedTextLength = encryptedText.length();
-    final int hexBlocksSize = encryptedTextLength / SEPARATOR;
-    String[] hexBlocks = new String[hexBlocksSize];
+    // 16 rounds will start here
+    // L and R arrays are created to store the Left and Right halves of the
+    // subkey respectively
+    int L[] = new int[32];
+    int R[] = new int[32];
+    int i;
 
-
-    for (int i = 0; i < hexBlocksSize; i++) {
-      hexBlocks[i] = "";
-      for (int j = 0; j < SEPARATOR; j++) {
-        hexBlocks[i] += encryptedText.substring((i * SEPARATOR) + j, (i * SEPARATOR) + j + 1);
-      }
+    // Permuted Choice 1 is done here
+    for (i = 0; i < 28; i++) {
+      C[i] = keyBits[PC1[i] - 1];
+    }
+    for (; i < 56; i++) {
+      D[i - 28] = keyBits[PC1[i] - 1];
     }
 
-    final String hexKey = rawStringToHexString(key);
-    String result = "";
-
-    for(String s : hexBlocks){
-      byte[] encryptedBytes =  this.hexStringToByteArray(s);
-      byte[] decryptedBytes = this.crypt(encryptedBytes, this.hexStringToByteArray(hexKey), "decrypt");
-      for(byte b : decryptedBytes) result += (char)b;
-    }
-
-    System.out.println(result);
-
-    return result;
-  }
-
-  private String rawStringToHexString(final String rawString){
-    String result = "";
-    for(char ch : rawString.toCharArray()){
-      result += String.format("%X", (byte)ch);
-    }
-    return result;
-  }
-
-
-  private byte[] performXOR(byte[] one, byte[] two) {
-    byte[] result = new byte[one.length];
-    for (int i = 0; i < one.length; i++) {
-      result[i] = (byte) (one[i] ^ two[i]);
-    }
-    return result;
-  }
-
-  private byte[] permute(byte[] input, int[] mapping) {
-    int byteCount = 1 + (mapping.length - 1) / 8;
-    byte[] output = new byte[byteCount];
-    int pos;
-
-    for (int i = 0; i < mapping.length; i++) {
-      pos = mapping[i] - 1;
-      int value = getBitFromArray(input, pos);
-      setBitInArray(output, i, value);
-    }
-    return output;
-  }
-
-  private int getBitFromArray(byte[] array, int pos) {
-    int value;
-    int bytePos = pos / 8;
-    int bitPos = pos % 8;
-    value = (array[bytePos] >> (8 - (bitPos + 1))) & 0x0001;
-    /* eg: right shift selected byte 5 times to get 3rd bit
-     * (bitPos = 2) at rightmost position and
-     * then AND with 0x0001*/
-    return value;
-  }
-
-  private void setBitInArray(byte[] input, int pos, int value) {
-    int bytePos = pos / 8;
-    int bitPos = pos % 8;
-    byte old = input[bytePos];
-    old = (byte) (((0xFF7F >> bitPos) & old) & 0x00FF);
-    byte newByte = (byte) ((value << (8 - (bitPos + 1))) | old);
-    input[bytePos] = newByte;
-  }
-
-  byte[] hexStringToByteArray(String string) {
-    int length = string.length();
-    int n = (int) Math.ceil((length + 1) / 2);
-    byte[] result = new byte[n];
-    for (int i = length - 1; i >= 0; i -= 2) {
-      if (i == 0) {
-        result[i / 2] = (byte) ((Character.digit('0', 16) << 4)
-            + Character.digit(string.charAt(i), 16));
+    // After PC1 the first L and R are ready to be used and hence looping
+    // can start once L and R are initialized
+    System.arraycopy(newBits, 0, L, 0, 32);
+    System.arraycopy(newBits, 32, R, 0, 32);
+    for (int n = 0; n < 16; n++) {
+      int newR[] = new int[0];
+      if (isDecrypt) {
+        newR = fiestel(R, subkey[15 - n]);
       } else {
-        result[i / 2] = (byte) ((Character.digit(string.charAt(i - 1), 16) << 4)
-            + Character.digit(string.charAt(i), 16));
+        newR = fiestel(R, KS(n, keyBits));
       }
+      // xor-ing the L and new R gives the new L value. new L is stored
+      // in R and new R is stored in L, thus exchanging R and L for the
+      // next round.
+      int newL[] = xor(L, newR);
+      L = R;
+      R = newL;
     }
-    return result;
+
+    // R and L has the two halves of the output before applying the final
+    // permutation. This is called the "Preoutput".
+    int output[] = new int[64];
+    System.arraycopy(R, 0, output, 0, 32);
+    System.arraycopy(L, 0, output, 32, 32);
+    int finalOutput[] = new int[64];
+    // Applying FP table to the preoutput, we get the final output:
+    // Encryption => final output is ciphertext
+    // Decryption => final output is plaintext
+    for (i = 0; i < 64; i++) {
+      finalOutput[i] = output[FP[i] - 1];
+    }
+
+    // Since the final output is stored as an int array of bits, we convert
+    // it into a hex string:
+    String hex = new String();
+    for (i = 0; i < 16; i++) {
+      String bin = new String();
+      for (int j = 0; j < 4; j++) {
+        bin += finalOutput[(4 * i) + j];
+      }
+      int decimal = Integer.parseInt(bin, 2);
+      hex += Integer.toHexString(decimal);
+    }
+    if (isDecrypt) {
+
+    } else {
+    }
+    System.out.println(hex.toUpperCase());
+    return finalOutput;
   }
 
-  void printBytes(byte[] input) {
-    for (int i = 0; i < input.length; i++) {
-      System.out.print(byteToBits(input[i]) + " ");
+  private static int[] KS(int round, int[] key) {
+    // The KS (Key Structure) function generates the round keys.
+    // C1 and D1 are the new values of C and D which will be generated in
+    // this round.
+    int C1[] = new int[28];
+    int D1[] = new int[28];
+
+    // The rotation array is used to set how many rotations are to be done
+    int rotationTimes = (int) rotations[round];
+    // leftShift() method is used for rotation (the rotation is basically)
+    // a left shift operation, hence the name.
+    C1 = leftShift(C, rotationTimes);
+    D1 = leftShift(D, rotationTimes);
+    // CnDn stores the combined C1 and D1 halves
+    int CnDn[] = new int[56];
+    System.arraycopy(C1, 0, CnDn, 0, 28);
+    System.arraycopy(D1, 0, CnDn, 28, 28);
+    // Kn stores the subkey, which is generated by applying the PC2 table
+    // to CnDn
+    int Kn[] = new int[48];
+    for (int i = 0; i < Kn.length; i++) {
+      Kn[i] = CnDn[PC2[i] - 1];
     }
-    System.out.println();
+
+    // Now we store C1 and D1 in C and D respectively, thus becoming the
+    // old C and D for the next round. Subkey is stored and returned.
+    subkey[round] = Kn;
+    C = C1;
+    D = D1;
+    return Kn;
   }
 
-  private String byteToBits(byte b) {
-    StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < 8; i++)
-      buffer.append((int) (b >> (8 - (i + 1)) & 0x0001));
-    return buffer.toString();
-  }
-
-  private byte[] getBits(byte[] input, int startPos, int length) {
-    int noOfBytes = (length - 1) / 8 + 1;
-    byte[] output = new byte[noOfBytes];
-    for (int i = 0; i < length; i++) {
-      int value = getBitFromArray(input, startPos + i);
-      setBitInArray(output, i, value);
+  private static int[] fiestel(int[] R, int[] roundKey) {
+    // Method to implement Fiestel function.
+    // First the 32 bits of the R array are expanded using E table.
+    int expandedR[] = new int[48];
+    for (int i = 0; i < 48; i++) {
+      expandedR[i] = R[E[i] - 1];
     }
+    // We xor the expanded R and the generated round key
+    int temp[] = xor(expandedR, roundKey);
+    // The S boxes are then applied to this xor result and this is the
+    // output of the Fiestel function.
+    int output[] = sBlock(temp);
     return output;
   }
 
-  private byte[] rotateLeft(byte[] input, int step, int length) {
-    int noOfBytes = (length - 1) / 8 + 1;
-    byte[] output = new byte[noOfBytes];
-    for (int i = 0; i < length; i++) {
-      int value = getBitFromArray(input, (i + step) % length);
-      setBitInArray(output, i, value);
+  private static int[] xor(int[] a, int[] b) {
+    // Simple xor function on two int arrays
+    int answer[] = new int[a.length];
+    for (int i = 0; i < a.length; i++) {
+      answer[i] = a[i] ^ b[i];
     }
-    return output;
+    return answer;
   }
 
-  private byte[] concatBits(byte[] one, int oneLength,
-                            byte[] two, int twoLength) {
-    int noOfBytes = (oneLength + twoLength - 1) / 8 + 1;
-    byte[] output = new byte[noOfBytes];
-    int i = 0, j = 0;
-    for (; i < oneLength; i++) {
-      int value = getBitFromArray(one, i);
-      setBitInArray(output, j, value);
-      j++;
-    }
-    for (i = 0; i < twoLength; i++) {
-      int value = getBitFromArray(two, i);
-      setBitInArray(output, j, value);
-      j++;
-    }
-    return output;
-  }
-
-  private byte[][] getSubKeys(byte[] masterKey) {
-    int noOfSubKeys = SHIFTS.length;
-    int keySize = PC1.length;
-    byte[] key = permute(masterKey, PC1);
-    byte[][] subKeys = new byte[noOfSubKeys][keySize];
-    byte[] leftHalf = getBits(key, 0, keySize / 2);
-    byte[] rightHalf = getBits(key, keySize / 2, keySize / 2);
-    for (int i = 0; i < noOfSubKeys; i++) {
-      leftHalf = rotateLeft(leftHalf, SHIFTS[i], keySize / 2);
-      rightHalf = rotateLeft(rightHalf, SHIFTS[i], keySize / 2);
-      byte[] subKey = concatBits(leftHalf, keySize / 2, rightHalf, keySize / 2);
-      subKeys[i] = permute(subKey, PC2);
-    }
-    return subKeys;
-  }
-
-  private byte[] crypt(byte[] message, byte[] key, String operation) {
-    if (message.length < 8) {
-      System.out.println("Message should be atleast 64 bits");
-      System.exit(1);
-    }
-    if (key.length != 8) {
-      System.out.println("Key should be 64 bits");
-      System.exit(1);
-    }
-    int length = message.length;
-    int n = (length + 7) / 8 * 8;
-    byte[] cipher = new byte[n];
-    if (length == 8) {
-      return cryptText(message, key, operation);
-    }
-    int i = 0;
-    int k = 0;
-    while (i < length) {
-      byte[] block = new byte[8];
-      byte[] result = new byte[8];
-      int j = 0;
-      for (; j < 8 && i < length; j++, i++) {
-        block[j] = message[i];
+  private static int[] sBlock(int[] bits) {
+    // S-boxes are applied in this method.
+    int output[] = new int[32];
+    // We know that input will be of 32 bits, hence we will loop 32/4 = 8
+    // times (divided by 4 as we will take 4 bits of input at each
+    // iteration).
+    for (int i = 0; i < 8; i++) {
+      // S-box requires a row and a column, which is found from the
+      // input bits. The first and 6th bit of the current iteration
+      // (i.e. bits 0 and 5) gives the row bits.
+      int row[] = new int[2];
+      row[0] = bits[6 * i];
+      row[1] = bits[(6 * i) + 5];
+      String sRow = row[0] + "" + row[1];
+      // Similarly column bits are found, which are the 4 bits between
+      // the two row bits (i.e. bits 1,2,3,4)
+      int column[] = new int[4];
+      column[0] = bits[(6 * i) + 1];
+      column[1] = bits[(6 * i) + 2];
+      column[2] = bits[(6 * i) + 3];
+      column[3] = bits[(6 * i) + 4];
+      String sColumn = column[0] + "" + column[1] + "" + column[2] + "" + column[3];
+      // Converting binary into decimal value, to be given into the
+      // array as input
+      int iRow = Integer.parseInt(sRow, 2);
+      int iColumn = Integer.parseInt(sColumn, 2);
+      int x = S[i][(iRow * 16) + iColumn];
+      // We get decimal value of the S-box here, but we need to convert
+      // it into binary:
+      String s = Integer.toBinaryString(x);
+      // Padding is required since Java returns a decimal '5' as '111' in
+      // binary, when we require '0111'.
+      while (s.length() < 4) {
+        s = "0" + s;
       }
-      while (j < 8) {
-        block[j++] = 0x00;
-      }
-      System.out.println("BLOCK: ");
-      printBytes(block);
-      result = cryptText(block, key, operation);
-      System.out.println("RESULT: ");
-      printBytes(result);
-      for (j = 0; j < 8 && k < cipher.length; j++, k++) {
-        cipher[k] = result[j];
+      // The binary bits are appended to the output
+      for (int j = 0; j < 4; j++) {
+        output[(i * 4) + j] = Integer.parseInt(s.charAt(j) + "");
       }
     }
-    return cipher;
+    // P table is applied to the output and this is the final output of one
+    // S-box round:
+    int finalOutput[] = new int[32];
+    for (int i = 0; i < 32; i++) {
+      finalOutput[i] = output[P[i] - 1];
+    }
+    return finalOutput;
   }
 
-  private byte[] cryptText(byte[] message, byte[] key, String operation) {
-    if (message.length != 8) {
-      System.out.println("Message should be 64 bits");
-      System.exit(1);
-    }
-    if (key.length != 8) {
-      System.out.println("Key should be 64 bits");
-      System.exit(1);
-    }
-    byte[] result = null;
-    int blockSize = IP.length;
-    byte[][] subKeys = getSubKeys(key);
-    int noOfRounds = subKeys.length;
-    /**
-     * Initial Permutation
-     */
-    message = permute(message, IP);
-    /**
-     * Split message into two halves
-     */
-    byte[] leftHalf = getBits(message, 0, blockSize / 2);
-    byte[] rightHalf = getBits(message, blockSize / 2, blockSize / 2);
-    for (int i = 0; i < noOfRounds; i++) {
-      byte[] temp = rightHalf;
-      /**
-       * Expansion
-       */
-      rightHalf = permute(rightHalf, E);
-      /**
-       * XOR rightHalf with roundKey
-       */
-      byte[] roundKey = null;
-      if (operation.equalsIgnoreCase("encrypt")) {
-        roundKey = subKeys[i];
-      } else if (operation.equalsIgnoreCase("decrypt")) {
-        roundKey = subKeys[noOfRounds - i - 1];
-      } else {
-        System.out.println("Unsupported operation");
-        System.exit(0);
+  private static int[] leftShift(int[] bits, int n) {
+    // Left shifting takes place here, i.e. each bit is rotated to the left
+    // and the leftmost bit is stored at the rightmost bit. This is a left
+    // shift operation.
+    int answer[] = new int[bits.length];
+    System.arraycopy(bits, 0, answer, 0, bits.length);
+    for (int i = 0; i < n; i++) {
+      int temp = answer[0];
+      for (int j = 0; j < bits.length - 1; j++) {
+        answer[j] = answer[j + 1];
       }
-      rightHalf = performXOR(rightHalf, roundKey);
-      /**
-       * S-Box
-       */
-      rightHalf = sBox(rightHalf);
-      /**
-       * Permutation
-       */
-      rightHalf = permute(rightHalf, P);
-      /**
-       * XOR rightHalf with leftHalf
-       */
-      rightHalf = performXOR(rightHalf, leftHalf);
-      /**
-       * L(i) = R(i-1)
-       */
-      leftHalf = temp;
+      answer[bits.length - 1] = temp;
     }
-    /**
-     * 32 bit swap
-     */
-    byte[] concatHalves = concatBits(rightHalf, blockSize / 2, leftHalf, blockSize / 2);
-    /**
-     * Inverse Initial Permutation
-     */
-    result = permute(concatHalves, IIP);
-    return result;
-  }
-
-  private byte[] sBox(byte[] input) {
-    /**
-     * Split input to 6-bit blocks
-     */
-    input = split(input, 6);
-    byte[] output = new byte[input.length / 2];
-    int leftHalf = 0;
-    for (int i = 0; i < input.length; i++) {
-      byte block = input[i];
-      /**
-       * row - first and last bits
-       * column - 4 bits in the middle
-       */
-      int row = 2 * (block >> 7 & 0x0001) + (block >> 2 & 0x0001);
-      int col = block >> 3 & 0x000F;
-      int[] selectedSBox = getSBox(i);
-      int rightHalf = selectedSBox[16 * row + col];
-      if (i % 2 == 0) {
-        leftHalf = rightHalf;
-      } else {
-        output[i / 2] = (byte) (16 * leftHalf + rightHalf);
-        leftHalf = 0;
-      }
-    }
-    return output;
-  }
-
-  private int[] getSBox(int i) {
-    switch (i) {
-      case 0:
-        return S1;
-      case 1:
-        return S2;
-      case 2:
-        return S3;
-      case 3:
-        return S4;
-      case 4:
-        return S5;
-      case 5:
-        return S6;
-      case 6:
-        return S7;
-      case 7:
-        return S8;
-      default:
-        return null;
-    }
-  }
-
-  private byte[] split(byte[] input, int length) {
-    int noOfBytes = (8 * input.length - 1) / length + 1;
-    byte[] output = new byte[noOfBytes];
-    for (int i = 0; i < noOfBytes; i++) {
-      for (int j = 0; j < length; j++) {
-        int value = getBitFromArray(input, length * i + j);
-        setBitInArray(output, 8 * i + j, value);
-      }
-    }
-    return output;
+    return answer;
   }
 
 }
-
