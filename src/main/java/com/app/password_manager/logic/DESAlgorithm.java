@@ -161,14 +161,26 @@ class DESAlgorithm {
     return str;
   }
 
-  public static void execute(String hexRawText, String hexKey, Type type) {
+  public static String execute(String hexText, String hexKey, Type type) {
 
 
+    int inputBits[] = hexString8ByteToBinary(hexText);
+    int keyBits[] = hexString8ByteToBinary(hexKey);
+
+
+    if(type == Type.ENCRYPT){
+      return permute(inputBits, keyBits, false);
+    }else if(type == Type.DECRYPT){
+      return permute(hexString8ByteToBinary(hexText), keyBits, true);
+    }
+
+    return null;
+  }
+
+  private static int[] hexString8ByteToBinary(String hex8ByteString){
     int inputBits[] = new int[64];
     for (int i = 0; i < 16; i++) {
-      String s = Integer.toBinaryString(Integer.parseInt(hexRawText.charAt(i) + "", 16));
-
-
+      String s = Integer.toBinaryString(Integer.parseInt(hex8ByteString.charAt(i) + "", 16));
       while (s.length() < 4) {
         s = "0" + s;
       }
@@ -177,24 +189,10 @@ class DESAlgorithm {
       }
     }
 
-    int keyBits[] = new int[64];
-    for (int i = 0; i < 16; i++) {
-      String s = Integer.toBinaryString(Integer.parseInt(hexKey.charAt(i) + "", 16));
-      while (s.length() < 4) {
-        s = "0" + s;
-      }
-      for (int j = 0; j < 4; j++) {
-        keyBits[(4 * i) + j] = Integer.parseInt(s.charAt(j) + "");
-      }
-    }
-
-    System.out.println("\n+++ ENCRYPTION +++");
-    int outputBits[] = permute(inputBits, keyBits, false);
-    System.out.println("\n+++ DECRYPTION +++");
-    permute(outputBits, keyBits, true);
+    return inputBits;
   }
 
-  private static int[] permute(int[] inputBits, int[] keyBits, boolean isDecrypt) {
+  private static String permute(int[] inputBits, int[] keyBits, boolean isDecrypt) {
     // Initial permutation step takes input bits and permutes into the
     // newBits array
     int newBits[] = new int[inputBits.length];
@@ -249,8 +247,6 @@ class DESAlgorithm {
       finalOutput[i] = output[FP[i] - 1];
     }
 
-    // Since the final output is stored as an int array of bits, we convert
-    // it into a hex string:
     String hex = new String();
     for (i = 0; i < 16; i++) {
       String bin = new String();
@@ -264,8 +260,8 @@ class DESAlgorithm {
 
     } else {
     }
-    System.out.println(hex.toUpperCase());
-    return finalOutput;
+//    System.out.println(hex.toUpperCase());
+    return hex.toUpperCase();
   }
 
   private static int[] KS(int round, int[] key) {
