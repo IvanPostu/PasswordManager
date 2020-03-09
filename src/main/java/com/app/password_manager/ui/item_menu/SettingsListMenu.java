@@ -31,8 +31,7 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
 
     String[] listElements = Arrays
         .stream(CommandList.values())
-        .map(item -> item.toString().replace('_', ' ')
-        )
+        .map(item -> item.toString().replace('_', ' '))
         .toArray(String[]::new);
 
     setListData(listElements);
@@ -74,6 +73,7 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
     this.jFramesManager.setMainMenu(newMainMenu);
     this.jFramesManager.getMainWindow().add(newMainMenu);
     this.jFramesManager.getMainWindow().repaint();
+    this.jFramesManager.getMainMenu().updateUI();
   }
 
   @Override
