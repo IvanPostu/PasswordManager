@@ -52,6 +52,8 @@ public class CreateAndSavePasswordMenu extends MainMenu {
   private void saveButtonClick(){
     String service = passwordServiceTextBox.getText();
     String password = new String(passwordTextBox.getPassword());
+
+
   }
 
   private void generatePasswordButtonClick(){
@@ -65,7 +67,7 @@ public class CreateAndSavePasswordMenu extends MainMenu {
     if(code == PasswordGeneratorMessageBox.YES){
       passwordTextBox.setText(generatedPassword);
     }else if(code == PasswordGeneratorMessageBox.NO){
-      passwordTextBox.setText("");
+      //do nothing
     }
 
 

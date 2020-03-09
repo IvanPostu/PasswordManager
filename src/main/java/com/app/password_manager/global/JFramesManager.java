@@ -1,5 +1,6 @@
 package com.app.password_manager.global;
 
+import com.app.password_manager.ui.MainWindow;
 import com.app.password_manager.ui.item_menu.ItemMenu;
 import com.app.password_manager.ui.item_menu.SettingsListMenu;
 import com.app.password_manager.ui.main_menu.MainMenu;
@@ -15,6 +16,6 @@ public class JFramesManager {
   private MainMenu mainMenu;
   private ItemMenu itemMenu;
   private SettingsListMenu settingsListMenu;
-
+  private MainWindow mainWindow;
 
 }

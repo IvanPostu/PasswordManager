@@ -29,7 +29,7 @@ public class ItemMenu extends JPanel {
         itemSelectedOKBtn.setBounds(10, SettingsListMenu.height+20, 55, 30);
         add(itemSelectedOKBtn);
 
-        jFramesManager.setSettingsListMenu(new SettingsListMenu(itemSelectedOKBtn));
+        jFramesManager.setSettingsListMenu(new SettingsListMenu(itemSelectedOKBtn, jFramesManager));
         add(jFramesManager.getSettingsListMenu());
 
 

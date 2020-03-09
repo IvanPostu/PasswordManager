@@ -1,27 +1,41 @@
 package com.app.password_manager.ui.item_menu;
 
+import com.app.password_manager.global.JFramesManager;
+import com.app.password_manager.ui.main_menu.CreateAndSavePasswordMenu;
+import com.app.password_manager.ui.main_menu.MainMenu;
+import com.app.password_manager.ui.main_menu.ServiceList;
 import com.app.password_manager.utils.Confirm;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 
 public class SettingsListMenu extends JList<String> implements MouseListener {
 
   public static final int width = 280;
   public static final int height = 300;
-  private static final String[] LIST_ELEMENTS = {
-      "Create and save password",
-      "Generate password"
+
+  private JFramesManager jFramesManager;
+
+  private enum CommandList {
+    Create_and_save_password,
+    Service_list
   };
 
-  public SettingsListMenu(JButton itemSelectedOKBtn) {
+  public SettingsListMenu(JButton itemSelectedOKBtn, JFramesManager jFramesManager) {
 
+    this.jFramesManager = jFramesManager;
 
+    String[] listElements = Arrays
+        .stream(CommandList.values())
+        .map(item -> item.toString().replace('_', ' ')
+        )
+        .toArray(String[]::new);
 
-    setListData(LIST_ELEMENTS);
+    setListData(listElements);
     setSelectedIndex(0);
 
     setBounds(10, 10, width, height);
@@ -31,25 +45,35 @@ public class SettingsListMenu extends JList<String> implements MouseListener {
     requestFocus();
     addMouseListener(this);
 
-    itemSelectedOKBtn.addActionListener( event -> {
+    itemSelectedOKBtn.addActionListener(event -> {
       clickOnMenuElement();
     });
 
   }
 
-  private void clickOnMenuElement(){
-    int listIndex = this.getSelectedIndex(); //0...n
 
-    switch(listIndex){
-      case 0:
-        Confirm.getResponseCode("Message title", LIST_ELEMENTS[0]);//0-no, 1-yes
+  private void clickOnMenuElement() {
+    int listIndex = this.getSelectedIndex(); //0...n
+    CommandList getCommand = CommandList.values()[listIndex];
+
+    switch (getCommand) {
+      case Create_and_save_password:
+        this.resetMainMenu(new CreateAndSavePasswordMenu());
         break;
-      case 1:
-        Confirm.getResponseCode("Message title", LIST_ELEMENTS[1]);//0-no, 1-yes
+      case Service_list:
+        this.resetMainMenu(new ServiceList());
         break;
       default:
         break;
     }
+  }
+
+  private void resetMainMenu(final MainMenu newMainMenu){
+    MainMenu oldMainMenu = this.jFramesManager.getMainMenu();
+    this.jFramesManager.getMainWindow().remove(oldMainMenu);
+    this.jFramesManager.setMainMenu(newMainMenu);
+    this.jFramesManager.getMainWindow().add(newMainMenu);
+    this.jFramesManager.getMainWindow().repaint();
   }
 
   @Override

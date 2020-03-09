@@ -13,8 +13,7 @@ public class Main {
         JFramesManager jFramesManager = new JFramesManager();
         jFramesManager.setMainMenu(new CreateAndSavePasswordMenu());
         jFramesManager.setItemMenu(new ItemMenu(jFramesManager));
-
-        new MainWindow(jFramesManager);
+        jFramesManager.setMainWindow(new MainWindow(jFramesManager));
 
 
 
