@@ -2,8 +2,7 @@ package com.app.password_manager.logic;
 
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-class DESAlgorithm {
+public class DESAlgorithm {
   // Initial Permutation table
   private static final byte[] IP = {
       58, 50, 42, 34, 26, 18, 10, 2,

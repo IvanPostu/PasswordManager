@@ -3,15 +3,12 @@ package com.app.password_manager.logic;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class DESAlgorithmTest {
 
-  private final String keys[] = {
-      "qwertyui",
-      "8uUUzml1",
-      "zxmnuirt",
-      "12345678"
-  };
 
   private final String messages[] = {
       "Any fool can write code that a computer can understand. " +
@@ -40,6 +37,9 @@ public class DESAlgorithmTest {
 
   @Test
   public void encryptAndDecryptTest() throws Exception {
+
+    List<String> keys = new LinkedList<>();
+    for(int i=0; i<10; i++) keys.add(Key8ByteGenerator.generate());
 
     for (final String key : keys) {
       for (final String message : messages) {

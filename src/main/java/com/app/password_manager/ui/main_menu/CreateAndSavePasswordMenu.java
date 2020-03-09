@@ -50,9 +50,10 @@ public class CreateAndSavePasswordMenu extends MainMenu {
   }
 
   private void saveButtonClick(){
-    String service = passwordServiceTextBox.getText();
-    String password = new String(passwordTextBox.getPassword());
+    final String service = passwordServiceTextBox.getText();
+    final String password = new String(passwordTextBox.getPassword());
 
+//    final String encryptedPassword = DESAlgorithm.encrypt(password, )
 
   }
 
