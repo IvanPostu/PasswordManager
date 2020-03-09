@@ -25,7 +25,6 @@ public class PasswordGeneratorMessageBox {
     JLabel label1 = new JLabel("Generated password:");
     label1.setVerticalAlignment(SwingConstants.BOTTOM);
     label1.setBounds((int)(.1*X), 20, (int)(.8*X), 20);
-//    label1.setBorder(BorderFactory.createLineBorder(Color.blue));
     label1.setHorizontalAlignment(SwingConstants.CENTER);
     panel.add(label1);
 
@@ -34,7 +33,6 @@ public class PasswordGeneratorMessageBox {
     label2.setBounds((int)(.1*X), 50, (int)(.8*X), 25);
     label2.setHorizontalAlignment(SwingConstants.CENTER);
     label2.setFont(new Font("Default", Font.BOLD, 18));
-//    label2.setBorder(BorderFactory.createLineBorder(Color.blue));
     panel.add(label2);
 
 

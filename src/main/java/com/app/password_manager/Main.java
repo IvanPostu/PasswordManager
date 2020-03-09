@@ -2,6 +2,7 @@ package com.app.password_manager;
 
 
 import com.app.password_manager.db.DBInitializer;
+import com.app.password_manager.db.DBSelectAllData;
 import com.app.password_manager.global.JFramesManager;
 import com.app.password_manager.ui.MainWindow;
 import com.app.password_manager.ui.item_menu.ItemMenu;
@@ -17,7 +18,7 @@ public class Main {
 
     DBInitializer.initializeDatabase();
 
-
+    DBSelectAllData.selectAll();
 
   }
 
