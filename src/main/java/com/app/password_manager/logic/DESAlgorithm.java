@@ -132,11 +132,30 @@ class DESAlgorithm {
 
   private static int[][] subkey = new int[16][48];
 
-  public enum Type {
+  private enum Type {
     ENCRYPT, DECRYPT
   }
 
-  ;
+  public static  String encrypt(final String text, final String key8Bytes){
+
+    String messageInHex = DESAlgorithm.rawStringToHexString(text);
+
+    return DESAlgorithm.execute(messageInHex,
+        DESAlgorithm.rawStringToHexString(key8Bytes),
+        DESAlgorithm.Type.ENCRYPT);
+
+  }
+
+  public static String decrypt(final String encryptedText,
+                        final String key8Bytes,
+                        final int initialMessageLength){
+
+    final String decryptedHex =  DESAlgorithm.execute(encryptedText,
+        DESAlgorithm.rawStringToHexString(key8Bytes),
+        DESAlgorithm.Type.DECRYPT).substring(0, initialMessageLength);
+
+    return DESAlgorithm.hexStringToRawString(decryptedHex);
+  }
 
   public static String rawStringToHexString(String rawText) {
     StringBuilder stringBuilder = new StringBuilder();
@@ -161,7 +180,7 @@ class DESAlgorithm {
     return str;
   }
 
-  public static String execute(String hexText, String hexKey, Type type) {
+  private static String execute(String hexText, String hexKey, Type type) {
 
 
 

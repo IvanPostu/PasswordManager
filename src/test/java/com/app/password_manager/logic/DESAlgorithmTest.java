@@ -45,18 +45,10 @@ public class DESAlgorithmTest {
       for (final String message : messages) {
         final int initialMessageLength = message.length() * 2;
 
-        String messageInHex = DESAlgorithm.rawStringToHexString(message);
 
-        String encrypted = DESAlgorithm.execute(messageInHex,
-            DESAlgorithm.rawStringToHexString(key),
-            DESAlgorithm.Type.ENCRYPT);
-
-        String decrypted = DESAlgorithm.execute(encrypted,
-            DESAlgorithm.rawStringToHexString(key),
-            DESAlgorithm.Type.DECRYPT).substring(0, initialMessageLength);
-
-        if (!messageInHex.equals(decrypted)) throw new Exception("The DES Algorithm doesn't work correctly!!!");
-
+        String encrypted = DESAlgorithm.encrypt(message, key);
+        String decrypted = DESAlgorithm.decrypt(encrypted, key, initialMessageLength);
+        if (!message.equals(decrypted)) throw new Exception("The DES Algorithm doesn't work correctly!!!");
       }
     }
 
