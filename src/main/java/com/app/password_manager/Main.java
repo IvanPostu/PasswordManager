@@ -1,6 +1,5 @@
 package com.app.password_manager;
 
-//import com.app.password_manager.logic.DESAlgorithm;
 
 import com.app.password_manager.db.DBInitializer;
 import com.app.password_manager.global.JFramesManager;
@@ -18,13 +17,7 @@ public class Main {
 
     DBInitializer.initializeDatabase();
 
-//    DataModel model = new DataModel();
-//    model.setDecryptedPasswordLength(5);
-//    model.setEncryptedPassword("qwerty");
-//    model.setEncryptionKey("key");
-//    model.setServiceName("facebook");
-//
-//    DBInsertData.insertDataInDatabase(model);
+
 
   }
 

@@ -43,7 +43,7 @@ public class DESAlgorithmTest {
 
     for (final String key : keys) {
       for (final String message : messages) {
-        final int initialMessageLength = message.length() * 2;
+        final int initialMessageLength = DESAlgorithm.calculateInitialMessageLength(message);
 
 
         String encrypted = DESAlgorithm.encrypt(message, key);

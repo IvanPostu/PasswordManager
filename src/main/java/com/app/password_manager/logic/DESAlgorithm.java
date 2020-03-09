@@ -135,6 +135,10 @@ public class DESAlgorithm {
     ENCRYPT, DECRYPT
   }
 
+  public static int calculateInitialMessageLength(final String message){
+    return message.length() * 2;
+  }
+
   public static  String encrypt(final String text, final String key8Bytes){
 
     String messageInHex = DESAlgorithm.rawStringToHexString(text);
